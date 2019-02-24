@@ -1,9 +1,9 @@
-# myst
-Maya scripts libs
+# MCAKE 
+## Maya scripts libs
 
 To get started:
 ```
-import myst.generic_utils.base as gu
+import mcake.generic_utils.base as gu
 reload(gu)
 #gu.rename_selected_by_replace("g_","g_mq_")
 #gu.freeze_and_center()
