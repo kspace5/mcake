@@ -10,9 +10,14 @@ def align_joints():
         cmds.setAttr("{0}.jointOrientY".format(obj), 0)
         print("Done for " + obj)
 
+def orient_joints_to_world():
+    objs = cmds.ls(sl=True)
+    for obj in objs:
+        cmds.joint(obj, e=True, oj="none", ch=True, zso=True)
+        print("Done for " + obj)
 
 def is_zero(v):
-    return abs(v - 0.0) < 1.0e-5;
+    return abs(v - 0.0) < 1.0e-5
 
 def check_joint_integrity():
     rmap = {}
