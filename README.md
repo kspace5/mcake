@@ -1,5 +1,5 @@
-# MCAKE 
-## Maya scripts libs
+# MCAKE
+## Maya scripts lib
 
 To get started:
 ```

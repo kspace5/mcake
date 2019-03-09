@@ -7,3 +7,4 @@ def cancelCallback(windowID,  *pArgs ):
 
 def text_val(field):
     return cmds.textField( field, query=True, text=True )
+    
