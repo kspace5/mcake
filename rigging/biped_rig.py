@@ -26,15 +26,15 @@ def createRiggingToolsUI():
     cmds.separator( h=10, style='none' )
     cmds.text( label='HIK Character Name:' )
     
-    charNameFld = cmds.textField( text='UrvaX2' )
+    cnFld = cmds.textField( text='UrvaX2' )
     
     
-    cmds.button( label='Init Joints', command=functools.partial( clean_up_joint_orient, charNameFld) )
-    cmds.button( label='Check Joints Integrity', command=functools.partial( check_joints_integrity, charNameFld) )
+    cmds.button( label='Init Joints', command=functools.partial( clean_up_joint_orient, cnFld) )
+    cmds.button( label='Check Joints Integrity', command=functools.partial( check_joints_integrity, cnFld) )
     
-    cmds.button( label='Build Control', command=functools.partial( build_controls, charNameFld) )
+    cmds.button( label='Build Control', command=functools.partial( build_controls, cnFld) )
     
-    cmds.separator( h=10, style='noe' )
+    cmds.separator( h=10, style='none' )
     cmds.separator( h=10, style='none' )
 
     # Cancel button
@@ -42,22 +42,24 @@ def createRiggingToolsUI():
 
     cmds.showWindow()
 
-def clean_up_joint_orient(charNameFld, *pArgs):
-    charName = uu.text_val(charNameFld)
+def clean_up_joint_orient(cnFld, *pArgs):
+    charName = uu.text_val(cnFld)
     # Assumes root is Hips, also select entire hierarchy - cool!
     cmds.select(charName + '_Hips', hi=True)
     jt.orient_joints_to_world()
     print('All joint oriented to World for', charName)
-    check_joints_integrity(charNameFld)
+    check_joints_integrity(cnFld)
 
-def check_joints_integrity(charNameFld, *pArgs):
+def check_joints_integrity(cnFld, *pArgs):
     integ = jt.check_joint_integrity()
     msg = "All joints verified clean - Congrats!\n(i.e. All joint rotate X,Y,Z and jointOrient X,Y,Z are zeroed out)" if integ else "Dirty joints found!"
     print(msg)
 
 # build and bind controls
-def build_controls(charNameFld, *pArgs):
-    charName = uu.text_val(charNameFld)
-    ctrl.build_global_control(charName)
-    ctrl.bind_global_control(charName)
-    ctrl.build_cog_control(charName)
+def build_controls(cnFld, *pArgs):
+    cn = uu.text_val(cnFld)
+    ctrl.build_global_control(cn)
+    ctrl.bind_global_control(cn)
+    
+    cog_ctrl = ctrl.build_cog_control(cn)
+    ctrl.bind_cog_control_to_hips(cn, cog_ctrl)

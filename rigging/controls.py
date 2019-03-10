@@ -7,7 +7,7 @@ reload(gu)
 CTRL_KEY = '_ctrl_'
 
 JOINTS_MASTER_REF = '_Reference' # Already created by Maya HIK
-CONTROLS_TOP_GROUP = CTRL_KEY + 'Reference' # Highest levele group created for all controls
+CONTROLS_TOP_GROUP = CTRL_KEY + 'Reference' # Highest level group created for all controls
 # Controls
 CTRL_GLOBAL = CTRL_KEY + 'global'
 CTRL_COG = CTRL_KEY + 'cog'
@@ -31,3 +31,10 @@ def build_cog_control(cn):
     name = cn + CTRL_COG
     cmds.circle( nr=(0, 1, 0), c=(0, 0, 0), r=25 ,n=name)
     cmds.parent( name, c_top_grp(cn))
+    return name
+
+def bind_cog_control_to_hips(cn, cog_ctrl):
+    hip_joint = cn + '_Hips'
+    gu.move_to_pos_of(hip_joint, cog_ctrl)
+    cmds.orientConstraint( cog_ctrl, hip_joint, mo=True, n=cn + "_ctrl_cog_orientConstraint")
+    
