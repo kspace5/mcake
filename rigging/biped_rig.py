@@ -58,22 +58,64 @@ def check_joints_integrity(cnFld, *pArgs):
 # build and bind controls
 def build_controls(cnFld, *pArgs):
     cn = uu.text_val(cnFld)
-    top_cl_grp = rct.c_top_grp(cn)
 
-    rct.build_global_control(cn)
-    rct.bind_global_control(cn)
+    cb = rct.BipedControlBuilder(cn)
+
+    cl_global = cb.build_global_control()
+    cb.bind_global_control()
     
-    #cog_ctrl = rct.build_cog_control(cn)
-    #rct.bind_cog_control_to_hips(cn, cog_ctrl)
+    cl_cog = cb.build_circle_control('COG', 25)
+    cb.add_orient_constraint_control('COG', cl_global)
+    rct.lock_scale(cl_cog)
 
-    cl_cog = rct.build_circle_control(cn + '_ctrl_COG', 25)
-    rct.add_orient_constraint_control(cn + '_Root', cl_cog, cn + '_ctrl_global')
-    #rct.lock_scale(cl_cog)
+    cl_hips = cb.build_circle_control('Hips', 15)
+    cb.add_orient_constraint_control('Hips', cl_cog)
+    rct.lock_trans_and_scale(cl_hips)
 
-    cl_name = rct.build_circle_control(cn + '_ctrl_SpineRoot', 20)
-    rct.add_orient_constraint_control(cn + '_SpineRoot', cl_name, cl_cog)
-    #rct.lock_trans_and_scale(cl_name)
+    cl_spineRoot = cb.build_circle_control('SpineRoot', 20)
+    cb.add_orient_constraint_control('SpineRoot', cl_cog)
+    rct.lock_trans_and_scale(cl_spineRoot)
 
-    cl_name = rct.build_circle_control(cn + '_ctrl_Hips', 15)
-    rct.add_orient_constraint_control(cn + '_Hips', cl_name, cl_cog)
-    #rct.lock_trans_and_scale(cl_name)
+    cl_Spine = cb.build_circle_control('Spine', 15)
+    cb.add_orient_constraint_control('Spine', cl_spineRoot)
+    rct.lock_trans_and_scale(cl_Spine)
+
+    cl_Spine1 = cb.build_circle_control('Spine1', 20)
+    cb.add_orient_constraint_control('Spine1', cl_Spine)
+    rct.lock_trans_and_scale(cl_Spine1)
+
+    cl_Spine2 = cb.build_circle_control('Spine2', 20)
+    cb.add_orient_constraint_control('Spine2', cl_Spine1)
+    rct.lock_trans_and_scale(cl_Spine2)
+
+    cl_neck = cb.build_circle_control('Neck', 10)
+    cb.add_orient_constraint_control('Neck', cl_Spine2)
+    rct.lock_trans_and_scale(cl_neck)
+
+    cl_Head = cb.build_circle_control('Head', 15)
+    cb.add_orient_constraint_control('Head', cl_neck)
+    rct.lock_trans_and_scale(cl_Head)
+
+    cl_RightShoulder = cb.build_circle_control('RightShoulder', 8, (1,0,0))
+    cb.add_orient_constraint_control('RightShoulder', cl_Spine2)
+    rct.lock_trans_and_scale(cl_RightShoulder)
+
+    cl_LeftShoulder = cb.build_circle_control('LeftShoulder', 8, (1,0,0))
+    cb.add_orient_constraint_control('LeftShoulder', cl_Spine2)
+    rct.lock_trans_and_scale(cl_LeftShoulder)
+
+    cl_RightArm = cb.build_circle_control('RightArm', 8, (1,0,0))
+    cb.add_orient_constraint_control('RightArm', cl_RightShoulder)
+    rct.lock_trans_and_scale(cl_RightArm)
+
+    cl_LeftArm = cb.build_circle_control('LeftArm', 8, (1,0,0))
+    cb.add_orient_constraint_control('LeftArm', cl_LeftShoulder)
+    rct.lock_trans_and_scale(cl_LeftArm)
+
+    cl_RightForeArm = cb.build_circle_control('RightForeArm', 8, (1,0,0))
+    cb.add_orient_constraint_control('RightForeArm', cl_RightArm)
+    rct.lock_trans_and_scale(cl_RightForeArm)
+
+    cl_LeftForeArm = cb.build_circle_control('LeftForeArm', 8, (1,0,0))
+    cb.add_orient_constraint_control('LeftForeArm', cl_LeftArm)
+    rct.lock_trans_and_scale(cl_LeftForeArm)
