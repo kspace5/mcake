@@ -4,6 +4,8 @@ import functools
 import mcake.rigging.joint_tools as jt
 import mcake.generic_utils.ui_utils as uu
 import mcake.rigging.controls as rct
+import mcake.generic_utils.base as gu
+reload(gu)
 reload(uu)
 reload(jt)
 reload(rct)
@@ -30,7 +32,9 @@ def createRiggingToolsUI():
     cmds.button( label='Check Joints Integrity', command=functools.partial( check_joints_integrity, cnFld) )
     cmds.button( label='Set Joint Params For Rigging', command=functools.partial( set_joint_attributes_for_rigging, cnFld) )
     cmds.button( label='Create IK Handles', command=functools.partial( create_IK_Handles, cnFld) )
-    cmds.button( label='Build Biped Control Rig', backgroundColor=(0.8,0.3,0.3), command=functools.partial( build_controls, cnFld) )
+    cmds.button( label='Create IK Handles', command=functools.partial( create_IK_Handles, cnFld) )
+    cmds.button( label='Build Controls', command=functools.partial( build_controls, cnFld) )
+    cmds.button( label='Build Biped Control Rig', backgroundColor=(0.9,0.6,0.3), command=functools.partial( build_complete_rig, cnFld) )
     
     cmds.separator( h=10, style='none' )
     cmds.separator( h=10, style='none' )
@@ -53,21 +57,25 @@ def clean_up_joint_orient(cnFld, *pArgs):
 def set_joint_attributes_for_rigging(cnFld, *pArgs):
     cn = uu.text_val(cnFld)
     # IMPORTANT: This is determined by the joint orient (world vs x along joint)
-    cmds.setAttr(cn + "_RightUpLeg.jointTypeX", 0)
-    cmds.setAttr(cn + "_LeftUpLeg.jointTypeX", 0)
-    cmds.setAttr(cn + "_RightLeg.jointTypeX", 0)
-    cmds.setAttr(cn + "_LeftLeg.jointTypeX", 0)
-    cmds.setAttr(cn + "_RightLeg.preferredAngleZ", 90)
-    cmds.setAttr(cn + "_LeftLeg.preferredAngleZ", 90)
+    cmds.setAttr(cn + '_RightUpLeg.jointTypeX', 0)
+    cmds.setAttr(cn + '_LeftUpLeg.jointTypeX', 0)
+    cmds.setAttr(cn + '_RightLeg.jointTypeX', 0)
+    cmds.setAttr(cn + '_LeftLeg.jointTypeX', 0)
+    cmds.setAttr(cn + '_RightLeg.preferredAngleZ', 90)
+    cmds.setAttr(cn + '_LeftLeg.preferredAngleZ', 90)
 
     print('Joint params set for', cn)
 
 def create_IK_Handles(cnFld, *pArgs):
     cn = uu.text_val(cnFld)
-    cmds.ikHandle(n=cn+'_RightFoot_ikHandle', sj=cn+'_RightUpLeg', ee=cn+'_RightFoot', sol='ikRPsolver')
-    cmds.setAttr(cn + "_RightFoot_ikHandle.stickiness", 1)
-    cmds.ikHandle(n=cn+'_LeftFoot_ikHandle', sj=cn+'_LeftUpLeg', ee=cn+'_LeftFoot', sol='ikRPsolver')
-    cmds.setAttr(cn + "_LeftFoot_ikHandle.stickiness", 1)
+    n = cn + '_RightFoot_ikHandle'
+    cmds.ikHandle(n=n, sj=cn+'_RightUpLeg', ee=cn+'_RightFoot', sol='ikRPsolver')
+    cmds.setAttr(n + '.stickiness', 1)
+    gu.freeze_transformations_by_name(n)
+    n = cn + '_RightFoot_ikHandle'
+    cmds.ikHandle(n=n, sj=cn+'_LeftUpLeg', ee=cn+'_LeftFoot', sol='ikRPsolver')
+    cmds.setAttr(n + '.stickiness', 1)
+    gu.freeze_transformations_by_name(n)
 
 def check_joints_integrity(cnFld, *pArgs):
     cn = uu.text_val(cnFld)
@@ -149,3 +157,10 @@ def build_controls(cnFld, *pArgs):
     cl_LeftHand = cb.build_circle_control('LeftHand', 3, (1,0,0))
     cb.add_orient_constraint_control('LeftHand', cl_LeftForeArm)
     rct.lock_trans_and_scale(cl_LeftHand)
+
+def build_complete_rig(cnFld, *pArgs):
+    clean_up_joint_orient(cnFld)
+    check_joints_integrity(cnFld)
+    set_joint_attributes_for_rigging(cnFld)
+    create_IK_Handles(cnFld)
+    build_controls(cnFld)
