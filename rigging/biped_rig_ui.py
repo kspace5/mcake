@@ -28,7 +28,7 @@ def createRiggingToolsUI():
     
     cmds.button( label='Fix All Joint Orient', width=100, height=30, command=functools.partial( clean_up_joint_orient, cnFld) )
     cmds.button( label='Check Joints Integrity', command=functools.partial( check_joints_integrity, cnFld) )
-    cmds.button( label='Set Joint Constraints', command=functools.partial( set_joint_constraints, cnFld) )
+    cmds.button( label='Set Joint Params For Rigging', command=functools.partial( set_joint_attributes_for_rigging, cnFld) )
     
     cmds.button( label='Build Biped Control Rig', backgroundColor=(0.8,0.3,0.3), command=functools.partial( build_controls, cnFld) )
     
@@ -44,24 +44,28 @@ def clean_up_joint_orient(cnFld, *pArgs):
     charName = uu.text_val(cnFld)
     # Assumes root is Hips, also select entire hierarchy - cool!
     cmds.select(charName + '_COG', hi=True)
+    # This is to point the end joints to the world, instead of random
     jt.orient_joints_to_world_all_selected()
-    print('All joint oriented to World for', charName)
+    jt.orient_joints_to_x_all_selected()
+    print('All joint oriented to X for', charName)
     check_joints_integrity(cnFld)
 
-def set_joint_constraints(cnFld, *pArgs):
+def set_joint_attributes_for_rigging(cnFld, *pArgs):
     charName = uu.text_val(cnFld)
     # IMPORTANT: This is determined by the joint orient (world vs x along joint)
-    cmds.setAttr(charName + "_RightUpLeg.jointTypeY", 0)
-    cmds.setAttr(charName + "_LeftUpLeg.jointTypeY", 0)
-    cmds.setAttr(charName + "_RightLeg.jointTypeY", 0)
-    cmds.setAttr(charName + "_LeftLeg.jointTypeY", 0)
+    cmds.setAttr(charName + "_RightUpLeg.jointTypeX", 0)
+    cmds.setAttr(charName + "_LeftUpLeg.jointTypeX", 0)
+    cmds.setAttr(charName + "_RightLeg.jointTypeX", 0)
+    cmds.setAttr(charName + "_LeftLeg.jointTypeX", 0)
+    cmds.setAttr(charName + "_RightLeg.preferredAngleZ", 90)
+    cmds.setAttr(charName + "_LeftLeg.preferredAngleZ", 90)
 
-    print('Joint constraints set.')
+    print('Joint params set for', charName)
 
 def check_joints_integrity(cnFld, *pArgs):
     charName = uu.text_val(cnFld)
     # Assumes root is Hips, also select entire hierarchy - cool!
-    #cmds.select(charName + '_COG', hi=True)
+    cmds.select(charName + '_COG', hi=True)
     integ = jt.check_joint_integrity_all_selected()
     msg = 'All joints verified clean - Congrats!\n(i.e. All joint rotate X,Y,Z and jointOrient X,Y,Z are zeroed out)' if integ else 'Dirty joints found!'
     print(msg)

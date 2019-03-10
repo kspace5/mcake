@@ -16,9 +16,16 @@ def orient_joints_to_world_all_selected():
         cmds.joint(obj, e=True, oj="none", ch=True, zso=True)
         print("Done for " + obj)
 
+def orient_joints_to_x_all_selected():
+    objs = cmds.ls(sl=True)
+    for obj in objs:
+        cmds.joint(obj, e=True, oj="xzy", secondaryAxisOrient="xup", ch=True, zso=True)
+        print("Done for " + obj)
+
 def is_zero(v):
     return abs(v - 0.0) < 1.0e-5
 
+# IMPORTANT: This is determined based on joint orient
 def check_joint_integrity_all_selected():
     rmap = {}
     objs = cmds.ls(sl=True)
@@ -44,5 +51,3 @@ def check_joint_integrity_all_selected():
             integ = False
             print("{0}: {1}".format(k,v[1]))
     return integ
-
-#check_joint_integrtity()
