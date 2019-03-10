@@ -17,25 +17,29 @@ def freeze_and_center():
     for obj in objs:
         cmds.makeIdentity(obj, apply=True, t=1, r=1, s=1, n=0, pn=1)
         cmds.CenterPivot(obj)
-        print("Done for {0}".format(obj))
+        print("Freeze and Center done for {0}".format(obj))
 
 def freeze_and_center_by_name(obj):
     cmds.makeIdentity(obj, apply=True, t=1, r=1, s=1, n=0, pn=1)
     cmds.CenterPivot(obj)
-    print("Done for {0}".format(obj))
+    print("Freeze and Center done for {0}".format(obj))
+
+def freeze_transformations_by_name(obj):
+    cmds.makeIdentity(obj, apply=True, t=1, r=1, s=1, n=0, pn=1)
+    print("Freeze Trans done for {0}".format(obj))
 
 def zero_x_pivot():
     objs = cmds.ls(sl=True)
     for obj in objs:
         cmds.move(0, 0, 0, obj + ".scalePivot",obj + ".rotatePivot", absolute=True)
-        print("Done for {0}".format(obj))
+        print("zero_x_pivot done for {0}".format(obj))
 
 def duplicate_and_mirror():
     objs = cmds.ls(sl=True)
     for obj in objs:
         ret = cmds.duplicate(obj, returnRootsOnly=True)
         cmds.scale(-1, 1, 1, obj)
-        print("Done for {0}".format(ret))
+        print("duplicate_and_mirror done for {0}".format(ret))
 
 # Do all above (3 methods)
 def duplicate_and_mirror_x():
