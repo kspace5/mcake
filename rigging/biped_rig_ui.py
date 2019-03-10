@@ -29,7 +29,7 @@ def createRiggingToolsUI():
     cmds.button( label='Fix All Joint Orient', width=100, height=30, command=functools.partial( clean_up_joint_orient, cnFld) )
     cmds.button( label='Check Joints Integrity', command=functools.partial( check_joints_integrity, cnFld) )
     cmds.button( label='Set Joint Params For Rigging', command=functools.partial( set_joint_attributes_for_rigging, cnFld) )
-    
+    cmds.button( label='Create IK Handles', command=functools.partial( create_IK_Handles, cnFld) )
     cmds.button( label='Build Biped Control Rig', backgroundColor=(0.8,0.3,0.3), command=functools.partial( build_controls, cnFld) )
     
     cmds.separator( h=10, style='none' )
@@ -41,31 +41,38 @@ def createRiggingToolsUI():
     cmds.showWindow()
 
 def clean_up_joint_orient(cnFld, *pArgs):
-    charName = uu.text_val(cnFld)
+    cn = uu.text_val(cnFld)
     # Assumes root is Hips, also select entire hierarchy - cool!
-    cmds.select(charName + '_COG', hi=True)
+    cmds.select(cn + '_COG', hi=True)
     # This is to point the end joints to the world, instead of random
     jt.orient_joints_to_world_all_selected()
     jt.orient_joints_to_x_all_selected()
-    print('All joint oriented to X for', charName)
+    print('All joint oriented to X for', cn)
     check_joints_integrity(cnFld)
 
 def set_joint_attributes_for_rigging(cnFld, *pArgs):
-    charName = uu.text_val(cnFld)
+    cn = uu.text_val(cnFld)
     # IMPORTANT: This is determined by the joint orient (world vs x along joint)
-    cmds.setAttr(charName + "_RightUpLeg.jointTypeX", 0)
-    cmds.setAttr(charName + "_LeftUpLeg.jointTypeX", 0)
-    cmds.setAttr(charName + "_RightLeg.jointTypeX", 0)
-    cmds.setAttr(charName + "_LeftLeg.jointTypeX", 0)
-    cmds.setAttr(charName + "_RightLeg.preferredAngleZ", 90)
-    cmds.setAttr(charName + "_LeftLeg.preferredAngleZ", 90)
+    cmds.setAttr(cn + "_RightUpLeg.jointTypeX", 0)
+    cmds.setAttr(cn + "_LeftUpLeg.jointTypeX", 0)
+    cmds.setAttr(cn + "_RightLeg.jointTypeX", 0)
+    cmds.setAttr(cn + "_LeftLeg.jointTypeX", 0)
+    cmds.setAttr(cn + "_RightLeg.preferredAngleZ", 90)
+    cmds.setAttr(cn + "_LeftLeg.preferredAngleZ", 90)
 
-    print('Joint params set for', charName)
+    print('Joint params set for', cn)
+
+def create_IK_Handles(cnFld, *pArgs):
+    cn = uu.text_val(cnFld)
+    cmds.ikHandle(n=cn+'_RightFoot_ikHandle', sj=cn+'_RightUpLeg', ee=cn+'_RightFoot', sol='ikRPsolver')
+    cmds.setAttr(cn + "_RightFoot_ikHandle.stickiness", 1)
+    cmds.ikHandle(n=cn+'_LeftFoot_ikHandle', sj=cn+'_LeftUpLeg', ee=cn+'_LeftFoot', sol='ikRPsolver')
+    cmds.setAttr(cn + "_LeftFoot_ikHandle.stickiness", 1)
 
 def check_joints_integrity(cnFld, *pArgs):
-    charName = uu.text_val(cnFld)
+    cn = uu.text_val(cnFld)
     # Assumes root is Hips, also select entire hierarchy - cool!
-    cmds.select(charName + '_COG', hi=True)
+    cmds.select(cn + '_COG', hi=True)
     integ = jt.check_joint_integrity_all_selected()
     msg = 'All joints verified clean - Congrats!\n(i.e. All joint rotate X,Y,Z and jointOrient X,Y,Z are zeroed out)' if integ else 'Dirty joints found!'
     print(msg)
@@ -80,7 +87,7 @@ def build_controls(cnFld, *pArgs):
     cb.bind_global_control()
     
     cl_cog = cb.build_circle_control('COG', 25)
-    cb.add_orient_constraint_control('COG', cl_global)
+    cb.add_parent_constraint_control('COG', cl_global)
     rct.lock_scale(cl_cog)
 
     cl_hips = cb.build_circle_control('Hips', 15)
