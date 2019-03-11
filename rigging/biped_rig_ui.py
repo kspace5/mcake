@@ -56,10 +56,14 @@ def clean_up_joint_orient(cnFld, *pArgs):
 def set_joint_attributes_for_rigging(cnFld, *pArgs):
     cn = uu.text_val(cnFld)
     # IMPORTANT: This is determined by the joint orient (world vs x along joint)
-    cmds.setAttr(cn + '_RightUpLeg.jointTypeX', 0)
-    cmds.setAttr(cn + '_LeftUpLeg.jointTypeX', 0)
-    cmds.setAttr(cn + '_RightLeg.jointTypeX', 0)
-    cmds.setAttr(cn + '_LeftLeg.jointTypeX', 0)
+    
+    # Important: Do not lock X for leg joints to enable IK and Pole Vec solvers
+    #cmds.setAttr(cn + '_RightUpLeg.jointTypeX', 0)
+    #cmds.setAttr(cn + '_LeftUpLeg.jointTypeX', 0)
+    #cmds.setAttr(cn + '_RightLeg.jointTypeX', 0)
+    #cmds.setAttr(cn + '_LeftLeg.jointTypeX', 0)
+    # --
+    
     cmds.setAttr(cn + '_RightLeg.preferredAngleZ', 90)
     cmds.setAttr(cn + '_LeftLeg.preferredAngleZ', 90)
 
@@ -93,7 +97,7 @@ def build_controls(cnFld, *pArgs):
     cl_global = cb.build_global_control()
     cb.bind_global_control()
 
-    control_builder_proc = cb.build_circle_control
+    control_builder_proc = cb.build_ellipse_control
 
     n = 'COG'
     cl_cog = control_builder_proc(prefix=n, radius=15, hr=0.02, scale=(1,1.5,1))
@@ -128,59 +132,62 @@ def build_controls(cnFld, *pArgs):
     cb.add_orient_constraint_control(target=n, parent=cl_neck)
     rct.lock_trans_and_scale(cl_Head)
     n = 'RightShoulder'
-    cl_RightShoulder = control_builder_proc(prefix=n, radius=8, axis=(1,0,0), hr=0.02, scale=(2,1,1))
+    cl_RightShoulder = control_builder_proc(prefix=n, radius=8, axis=(1,0,0), hr=0.02, scale=(2,1,1.7))
     cb.add_orient_constraint_control(target=n, parent=cl_Spine2)
     rct.lock_trans_and_scale(cl_RightShoulder)
     n = 'LeftShoulder'
-    cl_LeftShoulder = control_builder_proc(prefix=n, radius=8, axis=(1,0,0), hr=0.02, scale=(2,1,1))
+    cl_LeftShoulder = control_builder_proc(prefix=n, radius=8, axis=(1,0,0), hr=0.02, scale=(2,1,1.7))
     cb.add_orient_constraint_control(target=n, parent=cl_Spine2)
     rct.lock_trans_and_scale(cl_LeftShoulder)
     n = 'RightArm'
-    cl_RightArm = control_builder_proc(prefix=n, radius=7, axis=(1,0,0), hr=0.02, scale=(2,1,1))
+    cl_RightArm = control_builder_proc(prefix=n, radius=7, axis=(1,0,0), hr=0.02, scale=(2,1,1.7))
     cb.add_orient_constraint_control(target=n, parent=cl_RightShoulder)
     rct.lock_trans_and_scale(cl_RightArm)
     n = 'LeftArm'
-    cl_LeftArm = control_builder_proc(prefix=n, radius=7, axis=(1,0,0), hr=0.02, scale=(2,1,1))
+    cl_LeftArm = control_builder_proc(prefix=n, radius=7, axis=(1,0,0), hr=0.02, scale=(2,1,1.7))
     cb.add_orient_constraint_control(target=n, parent=cl_LeftShoulder)
     rct.lock_trans_and_scale(cl_LeftArm)
     n = 'RightForeArm'
-    cl_RightForeArm = control_builder_proc(prefix=n, radius=4, axis=(1,0,0), hr=0.02, scale=(2,1,1))
+    cl_RightForeArm = control_builder_proc(prefix=n, radius=4, axis=(1,0,0), hr=0.02, scale=(2,1,1.7))
     cb.add_orient_constraint_control(target=n, parent=cl_RightArm)
     rct.lock_trans_and_scale(cl_RightForeArm)
     n = 'LeftForeArm'
-    cl_LeftForeArm = control_builder_proc(prefix=n, radius=4, axis=(1,0,0), hr=0.02, scale=(2,1,1))
+    cl_LeftForeArm = control_builder_proc(prefix=n, radius=4, axis=(1,0,0), hr=0.02, scale=(2,1,1.7))
     cb.add_orient_constraint_control(target=n, parent=cl_LeftArm)
     rct.lock_trans_and_scale(cl_LeftForeArm)
     n = 'RightHand'
-    cl_RightHand = control_builder_proc(prefix=n, radius=3, axis=(1,0,0), hr=0.02, scale=(2,1,1))
+    cl_RightHand = control_builder_proc(prefix=n, radius=3, axis=(1,0,0), hr=0.02, scale=(2,1,1.7))
     cb.add_orient_constraint_control(target=n, parent=cl_RightForeArm)
     rct.lock_trans_and_scale(cl_RightHand)
     n = 'LeftHand'
-    cl_LeftHand = control_builder_proc(prefix=n, radius=3, axis=(1,0,0), hr=0.02, scale=(2,1,1))
+    cl_LeftHand = control_builder_proc(prefix=n, radius=3, axis=(1,0,0), hr=0.02, scale=(2,1,1.7))
     cb.add_orient_constraint_control(target=n, parent=cl_LeftForeArm)
     rct.lock_trans_and_scale(cl_LeftHand)
     n = 'RightUpLeg'
-    cl_RightUpLeg = control_builder_proc(prefix=n, radius=8, hr=0.02, scale=(1,1.5,1))
+    cl_RightUpLeg = control_builder_proc(prefix=n, radius=8, hr=0.02, scale=(1,1.5,2))
     cb.add_orient_constraint_control(target=n, parent=cl_hips)
     rct.lock_trans_and_scale(cl_RightUpLeg)
     n = 'LeftUpLeg'
-    cl_LeftUpLeg = control_builder_proc(prefix=n, radius=8, hr=0.02, scale=(1,1.5,1))
+    cl_LeftUpLeg = control_builder_proc(prefix=n, radius=8, hr=0.02, scale=(1,1.5,2))
     cb.add_orient_constraint_control(target=n, parent=cl_hips)
     rct.lock_trans_and_scale(cl_LeftUpLeg)
     # IK Handles - note: rotate for IK is useless
     n = 'RightFoot_ikHandle'
-    cl_RightUpLeg = control_builder_proc(prefix=n, radius=5, hr=0.02, scale=(1,1.5,1))
+    cl_RightUpLeg = control_builder_proc(prefix=n, radius=5, hr=0.02, scale=(1,1.5,1.5))
     cb.add_point_constraint_control(target=n, parent=cl_global)
     rct.lock_rotate_and_scale(cl_RightUpLeg)
     n = 'LeftFoot_ikHandle'
-    cl_LeftUpLeg = control_builder_proc(prefix=n, radius=5, hr=0.02, scale=(1,1.5,1))
+    cl_LeftUpLeg = control_builder_proc(prefix=n, radius=5, hr=0.02, scale=(1,1.5,1.5))
     cb.add_point_constraint_control(target=n, parent=cl_global)
     rct.lock_rotate_and_scale(cl_LeftUpLeg)
     # IK Pole Vector
     n = 'RightFoot_ikHandle_poleVec'
-    cl_RightLeg_PoleVec = control_builder_proc(prefix=n, radius=4, axis=(0,0,1), hr=0.02, scale=(2,1,1))
+    cl_RightLeg_PoleVec = control_builder_proc(prefix=n, radius=2, axis=(0,0,1), hr=0.02, scale=(1,3,1.5))
+    cb.add_poleVector_constraint_control(control=n, ik_handle='RightFoot_ikHandle', align_joint='RightLeg', parent=cl_global)
+
     n = 'LeftFoot_ikHandle_poleVec'
-    cl_LeftLeg_PoleVec = control_builder_proc(prefix=n, radius=4, axis=(0,0,1), hr=0.02, scale=(2,1,1))
+    cl_LeftLeg_PoleVec = control_builder_proc(prefix=n, radius=2, axis=(0,0,1), hr=0.02, scale=(1,3,1.5))
+    cb.add_poleVector_constraint_control(control=n, ik_handle='LeftFoot_ikHandle', align_joint='LeftLeg', parent=cl_global)
 
 def build_complete_rig(cnFld, *pArgs):
     clean_up_joint_orient(cnFld)

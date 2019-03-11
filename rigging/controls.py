@@ -57,9 +57,15 @@ class BipedControlBuilder:
         return n
     #-------end genric controls-------#
 
-    def pvt_align_control(self, trg_obj, ctrl_obj, parent):
+    # Supports optional relative offset
+    def pvt_align_control(self, trg_obj, ctrl_obj, parent, **p):
         cmds.parent(ctrl_obj, parent)
         gu.move_to_pos_of(trg_obj, ctrl_obj)
+        
+        if 'offset' in p:
+            loc = p['offset']
+            cmds.move(loc[0],loc[1],loc[2], ctrl_obj, relative=True)
+
         gu.freeze_transformations_by_name(ctrl_obj)
 
     def add_orient_constraint_control(self, **p):
@@ -95,12 +101,16 @@ class BipedControlBuilder:
         cmds.parent(n, self.CONTROLS_EXTRAS_GROUP)
 
     def add_poleVector_constraint_control(self, **p):
-        ctrl_obj = self.cn + '_ctrl_' + p['target']
-        target = self.cn + '_' + p['target']
-        self.pvt_align_control(target, ctrl_obj, p['parent'])
-        n=ctrl_obj + '_pointConstraint'
-        cmds.pointConstraint( ctrl_obj, target, mo=True, n=n)
+        ctrl_obj = self.cn + '_ctrl_' + p['control']
+        ik_handle = self.cn + '_' + p['ik_handle']
+        align_joint = self.cn + '_' + p['align_joint']
+        self.pvt_align_control(align_joint, ctrl_obj, p['parent'], offset=(0,0,40))
+        n=ctrl_obj + '_poleVecConstraint'
+        cmds.poleVectorConstraint( ctrl_obj, ik_handle, n=n)
         cmds.parent(n, self.CONTROLS_EXTRAS_GROUP)
+        cmds.setAttr(ctrl_obj + '.ty', lock=True)
+        cmds.setAttr(ctrl_obj + '.tz', lock=True)
+        lock_rotate_and_scale(ctrl_obj)
 
 def lock_trans(obj):
     cmds.setAttr(obj + '.tx', lock=True)
