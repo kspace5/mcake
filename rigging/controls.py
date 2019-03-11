@@ -27,40 +27,79 @@ class BipedControlBuilder:
         cmds.scaleConstraint( self.cn + '_ctrl_global', self.MAYA_HIK_REFERENCE, mo=True, n=n)
         cmds.parent(n, self.CONTROLS_EXTRAS_GROUP)
 
-    def build_circle_control(self, prefix, radius=25, axis=(0, 1, 0)):
-        n=self.cn + '_ctrl_' + prefix
-        cmds.circle( nr=axis, c=(0, 0, 0), r=radius ,n=n)
-        #cmds.scale( 3, 3, 3, 'curve1', pivot=(1, 0, 0), absolute=True )
+    '''
+    GENERIC CONTROLS
+    ----------------
+    Controls like curve, ellipse, torus are interface 
+    compatible with each other. Just switch to work.
+    '''
+    def build_circle_control(self, **p):
+        n=self.cn + '_ctrl_' + p['prefix']
+        axis = p['axis'] if 'axis' in p else (0,1,0)
+        r=p['radius']
+        cmds.circle( nr=axis, c=(0, 0, 0), r=r, n=n)
         return n
+
+    def build_torus_control(self, **p):
+        n=self.cn + '_ctrl_' + p['prefix']
+        axis = p['axis'] if 'axis' in p else (0,1,0)
+        scale = p['scale'] if 'scale' in p else (1,1,1)
+        hr = p['hr'] if 'hr' in p else 0.05 # height ratio
+        r=p['radius']
+        cmds.torus(ax=axis, ssw=0, esw=360, msw=360, r=r, hr=hr, d=3, ut=0, tol=0.01, s=8, nsp=4, ch=1, n=n)
+        cmds.scale(scale[0], scale[1], scale[2], n, absolute=True)
+        return n
+
+    def build_ellipse_control(self, **p):
+        n = self.build_circle_control(**p)
+        s = p['scale']
+        cmds.scale(s[0], s[1], s[2], n, absolute=True)
+        return n
+    #-------end genric controls-------#
 
     def pvt_align_control(self, trg_obj, ctrl_obj, parent):
         cmds.parent(ctrl_obj, parent)
         gu.move_to_pos_of(trg_obj, ctrl_obj)
         gu.freeze_transformations_by_name(ctrl_obj)
 
-    def add_orient_constraint_control(self, trg_obj, parent, ctrl_obj=None):
-        ctrl_obj = ctrl_obj or self.cn + '_ctrl_' + trg_obj
-        trg_obj = self.cn + '_' + trg_obj
-        print(ctrl_obj)
-        self.pvt_align_control(trg_obj, ctrl_obj, parent)
+    def add_orient_constraint_control(self, **p):
+        ctrl_obj = self.cn + '_ctrl_' + p['target']
+        target = self.cn + '_' + p['target']
+        self.pvt_align_control(target, ctrl_obj, p['parent'])
         n=ctrl_obj + '_orientConstraint'
-        cmds.orientConstraint( ctrl_obj, trg_obj, mo=True, n=n)
+        cmds.orientConstraint( ctrl_obj, target, mo=True, n=n)
         cmds.parent(n, self.CONTROLS_EXTRAS_GROUP)
 
-    def add_parent_constraint_control(self, trg_obj, parent, ctrl_obj=None):
-        ctrl_obj = ctrl_obj or self.cn + '_ctrl_' + trg_obj
-        trg_obj = self.cn + '_' + trg_obj
-        self.pvt_align_control(trg_obj, ctrl_obj, parent)
+    def add_parent_constraint_control(self, **p):
+        ctrl_obj = self.cn + '_ctrl_' + p['target']
+        target = self.cn + '_' + p['target']
+        self.pvt_align_control(target, ctrl_obj, p['parent'])
         n=ctrl_obj + '_parentConstraint'
-        cmds.parentConstraint( ctrl_obj, trg_obj, mo=True, n=n)
+        cmds.parentConstraint( ctrl_obj, target, mo=True, n=n)
         cmds.parent(n, self.CONTROLS_EXTRAS_GROUP)
 
-    def add_scale_constraint_control(self, trg_obj, parent, ctrl_obj=None):
-        ctrl_obj = ctrl_obj or self.cn + '_ctrl_' + trg_obj
-        trg_obj = self.cn + '_' + trg_obj
-        self.pvt_align_control(trg_obj, ctrl_obj, parent)
+    def add_scale_constraint_control(self, **p):
+        ctrl_obj = self.cn + '_ctrl_' + p['target']
+        target = self.cn + '_' + p['target']
+        self.pvt_align_control(target, ctrl_obj, p['parent'])
         n=ctrl_obj + '_scaleConstraint'
-        cmds.scaleConstraint( ctrl_obj, trg_obj, mo=True, n=n)
+        cmds.scaleConstraint( ctrl_obj, target, mo=True, n=n)
+        cmds.parent(n, self.CONTROLS_EXTRAS_GROUP)
+
+    def add_point_constraint_control(self, **p):
+        ctrl_obj = self.cn + '_ctrl_' + p['target']
+        target = self.cn + '_' + p['target']
+        self.pvt_align_control(target, ctrl_obj, p['parent'])
+        n=ctrl_obj + '_pointConstraint'
+        cmds.pointConstraint( ctrl_obj, target, mo=True, n=n)
+        cmds.parent(n, self.CONTROLS_EXTRAS_GROUP)
+
+    def add_poleVector_constraint_control(self, **p):
+        ctrl_obj = self.cn + '_ctrl_' + p['target']
+        target = self.cn + '_' + p['target']
+        self.pvt_align_control(target, ctrl_obj, p['parent'])
+        n=ctrl_obj + '_pointConstraint'
+        cmds.pointConstraint( ctrl_obj, target, mo=True, n=n)
         cmds.parent(n, self.CONTROLS_EXTRAS_GROUP)
 
 def lock_trans(obj):
@@ -73,6 +112,15 @@ def lock_scale(obj):
     cmds.setAttr(obj + '.sy', lock=True)
     cmds.setAttr(obj + '.sz', lock=True)
 
+def lock_rotate(obj):
+    cmds.setAttr(obj + '.rx', lock=True)
+    cmds.setAttr(obj + '.ry', lock=True)
+    cmds.setAttr(obj + '.rz', lock=True)
+
 def lock_trans_and_scale(obj):
     lock_trans(obj)
+    lock_scale(obj) 
+
+def lock_rotate_and_scale(obj):
+    lock_rotate(obj)
     lock_scale(obj) 
