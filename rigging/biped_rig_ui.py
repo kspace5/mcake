@@ -97,10 +97,10 @@ def build_controls(cnFld, *pArgs):
     cl_global = cb.build_global_control()
     cb.bind_global_control()
 
-    control_builder_proc = cb.build_ellipse_control
+    control_builder_proc = cb.build_torus_control
 
     n = 'COG'
-    cl_cog = control_builder_proc(prefix=n, radius=15, hr=0.02, scale=(1,1.5,1))
+    cl_cog = control_builder_proc(prefix=n, radius=25, hr=0.02, scale=(1,2,1))
     cb.add_parent_constraint_control(target=n, parent=cl_global)
     rct.lock_scale(cl_cog)
     n = 'Hips'
