@@ -112,6 +112,19 @@ class BipedControlBuilder:
         cmds.setAttr(ctrl_obj + '.tz', lock=True)
         lock_rotate_and_scale(ctrl_obj)
 
+    def create_IK_Handles(self, **p):
+        cn = self.cn
+        n = cn + '_RightFoot_ikHandle'
+        cmds.ikHandle(n=n, sj=cn+'_RightUpLeg', ee=cn+'_RightFoot', sol='ikRPsolver')
+        cmds.setAttr(n + '.stickiness', 1)
+        gu.freeze_transformations_by_name(n)
+        cmds.parent(n, self.CONTROLS_EXTRAS_GROUP)
+        n = cn + '_LeftFoot_ikHandle'
+        cmds.ikHandle(n=n, sj=cn+'_LeftUpLeg', ee=cn+'_LeftFoot', sol='ikRPsolver')
+        cmds.setAttr(n + '.stickiness', 1)
+        gu.freeze_transformations_by_name(n)
+        cmds.parent(n, self.CONTROLS_EXTRAS_GROUP)  
+
 def lock_trans(obj):
     cmds.setAttr(obj + '.tx', lock=True)
     cmds.setAttr(obj + '.ty', lock=True)

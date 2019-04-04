@@ -5,6 +5,7 @@ import mcake.rigging.joint_tools as jt
 import mcake.generic_utils.ui_utils as uu
 import mcake.rigging.controls as rct
 import mcake.generic_utils.base as gu
+
 reload(gu)
 reload(uu)
 reload(jt)
@@ -12,7 +13,7 @@ reload(rct)
 
 def createRiggingToolsUI():
     
-    windowID = 'riggerWindow'
+    windowID = 'BiperRigWindow'
     
     if cmds.window( windowID, exists=True ):
         cmds.deleteUI( windowID )
@@ -98,7 +99,7 @@ def build_controls(cnFld, *pArgs):
     cb.bind_global_control()
 
     control_builder_proc = cb.build_torus_control
-
+    cb.create_IK_Handles()
     n = 'COG'
     cl_cog = control_builder_proc(prefix=n, radius=25, hr=0.02, scale=(1,2,1))
     cb.add_parent_constraint_control(target=n, parent=cl_global)
@@ -193,5 +194,5 @@ def build_complete_rig(cnFld, *pArgs):
     clean_up_joint_orient(cnFld)
     check_joints_integrity(cnFld)
     set_joint_attributes_for_rigging(cnFld)
-    create_IK_Handles(cnFld)
+    #create_IK_Handles(cnFld)
     build_controls(cnFld)
