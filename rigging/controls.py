@@ -55,11 +55,12 @@ class BipedControlBuilder:
         s = p['scale']
         cmds.scale(s[0], s[1], s[2], n, absolute=True)
         return n
-    #-------end genric controls-------#
+    #-------end generic controls-------#
 
     # Supports optional relative offset
-    def pvt_align_control(self, trg_obj, ctrl_obj, parent, **p):
-        cmds.parent(ctrl_obj, parent)
+    def pvt_align_control(self, trg_obj, ctrl_obj, parent=None, **p):
+        if parent is not None:
+            cmds.parent(ctrl_obj, parent)
         gu.move_to_pos_of(trg_obj, ctrl_obj)
         
         if 'offset' in p:
@@ -123,7 +124,42 @@ class BipedControlBuilder:
         cmds.ikHandle(n=n, sj=cn+'_LeftUpLeg', ee=cn+'_LeftFoot', sol='ikRPsolver')
         cmds.setAttr(n + '.stickiness', 1)
         gu.freeze_transformations_by_name(n)
-        cmds.parent(n, self.CONTROLS_EXTRAS_GROUP)  
+        cmds.parent(n, self.CONTROLS_EXTRAS_GROUP) 
+    
+    def create_footRoll_controls(self, **p):
+        cn = self.cn
+        
+        joint_n = cn + '_LeftFoot'
+        nD = cn + '_LeftFoot_FRoll_LocB'
+        cmds.spaceLocator(n=nD)
+        self.pvt_align_control(joint_n, nD)
+        
+        joint_n = cn + '_LeftToeBase'
+        nC = cn + '_LeftFoot_FRoll_LocC'
+        cmds.spaceLocator(n=nC)
+        self.pvt_align_control(joint_n, nC)
+        
+        joint_n = cn + '_LeftToeEnd'
+        nB = cn + '_LeftFoot_FRoll_LocD'
+        cmds.spaceLocator(n=nB)
+        self.pvt_align_control(joint_n, nB)
+
+        joint_n = cn + '_LeftFoot'
+        nA = cn + '_LeftFoot_FRoll_LocA'
+        cmds.spaceLocator(n=nA)
+        #self.pvt_align_control(joint_n, nA)
+        gu.move_to_x_pos_of(nD, nA)
+        gu.move_to_z_pos_of(nD, nA)
+        gu.move_to_y_pos_of(nC, nA)
+
+        cmds.parent(nA, self.CONTROLS_EXTRAS_GROUP)
+        cmds.parent(nB, nA) 
+        cmds.parent(nC, nB)
+        cmds.parent(nD, nC)
+        gu.freeze_transformations_by_name(nD)
+        gu.freeze_transformations_by_name(nC)
+        gu.freeze_transformations_by_name(nB)
+        gu.freeze_transformations_by_name(nA)
 
 def lock_trans(obj):
     cmds.setAttr(obj + '.tx', lock=True)

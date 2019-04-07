@@ -70,6 +70,7 @@ def set_joint_attributes_for_rigging(cnFld, *pArgs):
 
     print('Joint params set for', cn)
 
+'''
 def create_IK_Handles(cnFld, *pArgs):
     cn = uu.text_val(cnFld)
     n = cn + '_RightFoot_ikHandle'
@@ -80,6 +81,7 @@ def create_IK_Handles(cnFld, *pArgs):
     cmds.ikHandle(n=n, sj=cn+'_LeftUpLeg', ee=cn+'_LeftFoot', sol='ikRPsolver')
     cmds.setAttr(n + '.stickiness', 1)
     gu.freeze_transformations_by_name(n)
+'''
 
 def check_joints_integrity(cnFld, *pArgs):
     cn = uu.text_val(cnFld)
@@ -94,7 +96,7 @@ def build_controls(cnFld, *pArgs):
     cn = uu.text_val(cnFld)
 
     cb = rct.BipedControlBuilder(cn)
-
+    
     cl_global = cb.build_global_control()
     cb.bind_global_control()
 
@@ -175,11 +177,11 @@ def build_controls(cnFld, *pArgs):
     # IK Handles - note: rotate for IK is useless
     n = 'RightFoot_ikHandle'
     cl_RightUpLeg = control_builder_proc(prefix=n, radius=5, hr=0.02, scale=(1,1.5,1.5))
-    cb.add_point_constraint_control(target=n, parent=cl_global)
+    #cb.add_point_constraint_control(target=n, parent=cl_global)
     rct.lock_rotate_and_scale(cl_RightUpLeg)
     n = 'LeftFoot_ikHandle'
     cl_LeftUpLeg = control_builder_proc(prefix=n, radius=5, hr=0.02, scale=(1,1.5,1.5))
-    cb.add_point_constraint_control(target=n, parent=cl_global)
+    #cb.add_point_constraint_control(target=n, parent=cl_global)
     rct.lock_rotate_and_scale(cl_LeftUpLeg)
     # IK Pole Vector
     n = 'RightFoot_ikHandle_poleVec'
@@ -189,10 +191,12 @@ def build_controls(cnFld, *pArgs):
     n = 'LeftFoot_ikHandle_poleVec'
     cl_LeftLeg_PoleVec = control_builder_proc(prefix=n, radius=2, axis=(0,0,1), hr=0.02, scale=(1,3,1.5))
     cb.add_poleVector_constraint_control(control=n, ik_handle='LeftFoot_ikHandle', align_joint='LeftLeg', parent=cl_global)
+    
+    # Foot Roll Controls
+    cb.create_footRoll_controls()
 
 def build_complete_rig(cnFld, *pArgs):
     clean_up_joint_orient(cnFld)
     check_joints_integrity(cnFld)
     set_joint_attributes_for_rigging(cnFld)
-    #create_IK_Handles(cnFld)
     build_controls(cnFld)

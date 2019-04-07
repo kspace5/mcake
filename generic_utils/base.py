@@ -55,3 +55,20 @@ def get_world_pos(obj):
 def move_to_pos_of(src_obj, trg_obj):
     loc = get_world_pos(src_obj)
     cmds.move(loc[0],loc[1], loc[2], trg_obj, absolute=True)
+
+def move_to_x_pos_of(src_obj, trg_obj):
+    cur_loc = get_world_pos(trg_obj)
+    loc = get_world_pos(src_obj)
+    cmds.move(loc[0],cur_loc[1], cur_loc[2], trg_obj, absolute=True)
+
+def move_to_y_pos_of(src_obj, trg_obj):
+    cur_loc = get_world_pos(trg_obj)
+    loc = get_world_pos(src_obj)
+    print('loc', loc[1])
+    cmds.move(cur_loc[0],loc[1], cur_loc[2], trg_obj, absolute=True)
+    #cmds.move(0, 10, 0, trg_obj, absolute=False)
+
+def move_to_z_pos_of(src_obj, trg_obj):
+    cur_loc = get_world_pos(trg_obj)
+    loc = get_world_pos(src_obj)
+    cmds.move(cur_loc[0],cur_loc[1], loc[2], trg_obj, absolute=True)
