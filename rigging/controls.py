@@ -73,7 +73,7 @@ class BipedControlBuilder:
         ctrl_obj = self.cn + '_ctrl_' + p['target']
         target = self.cn + '_' + p['target']
         self.pvt_align_control(target, ctrl_obj, p['parent'])
-        n=ctrl_obj + '_orientConstraint'
+        n = ctrl_obj + '_orientConstraint'
         cmds.orientConstraint( ctrl_obj, target, mo=True, n=n)
         cmds.parent(n, self.CONTROLS_EXTRAS_GROUP)
 
@@ -129,8 +129,42 @@ class BipedControlBuilder:
     def create_footRoll_controls(self, **p):
         cn = self.cn
         
+        # ---------RIGHT---------
+        joint_n = cn + '_RightFoot'
+        nD = cn + '_RightFoot_FRoll_LocD'
+        cmds.spaceLocator(n=nD)
+        self.pvt_align_control(joint_n, nD)
+        
+        joint_n = cn + '_RightToeBase'
+        nC = cn + '_RightFoot_FRoll_LocC'
+        cmds.spaceLocator(n=nC)
+        self.pvt_align_control(joint_n, nC)
+        
+        joint_n = cn + '_RightToeEnd'
+        nB = cn + '_RightFoot_FRoll_LocB'
+        cmds.spaceLocator(n=nB)
+        self.pvt_align_control(joint_n, nB)
+
+        joint_n = cn + '_RightFoot'
+        nA = cn + '_RightFoot_FRoll_LocA'
+        cmds.spaceLocator(n=nA)
+        #self.pvt_align_control(joint_n, nA)
+        gu.move_to_x_pos_of(nD, nA)
+        gu.move_to_z_pos_of(nD, nA)
+        gu.move_to_y_pos_of(nC, nA)
+
+        cmds.parent(nA, self.CONTROLS_EXTRAS_GROUP)
+        cmds.parent(nB, nA) 
+        cmds.parent(nC, nB)
+        cmds.parent(nD, nC)
+        gu.freeze_transformations_by_name(nD)
+        gu.freeze_transformations_by_name(nC)
+        gu.freeze_transformations_by_name(nB)
+        gu.freeze_transformations_by_name(nA)
+
+        #---- LEFT ----
         joint_n = cn + '_LeftFoot'
-        nD = cn + '_LeftFoot_FRoll_LocB'
+        nD = cn + '_LeftFoot_FRoll_LocD'
         cmds.spaceLocator(n=nD)
         self.pvt_align_control(joint_n, nD)
         
@@ -140,7 +174,7 @@ class BipedControlBuilder:
         self.pvt_align_control(joint_n, nC)
         
         joint_n = cn + '_LeftToeEnd'
-        nB = cn + '_LeftFoot_FRoll_LocD'
+        nB = cn + '_LeftFoot_FRoll_LocB'
         cmds.spaceLocator(n=nB)
         self.pvt_align_control(joint_n, nB)
 
@@ -161,37 +195,38 @@ class BipedControlBuilder:
         gu.freeze_transformations_by_name(nB)
         gu.freeze_transformations_by_name(nA)
 
-        joint_n = cn + '_RightFoot'
-        nD = cn + '_RightFoot_FRoll_LocB'
-        cmds.spaceLocator(n=nD)
-        self.pvt_align_control(joint_n, nD)
+        #---constraints----
+        nD = cn + '_RightFoot_FRoll_LocD'
+        n = nD + '_pointConstraint_RightFoot_ikHandle'
+        cmds.pointConstraint( nD, cn + '_RightFoot_ikHandle', mo=True, n=n)
+        cmds.parent(n, self.CONTROLS_EXTRAS_GROUP)
+
+        nD = cn + '_LeftFoot_FRoll_LocD'
+        n = nD + '_pointConstraint_LeftFoot_ikHandle'
+        cmds.pointConstraint( nD, cn + '_LeftFoot_ikHandle', mo=True, n=n)
+        cmds.parent(n, self.CONTROLS_EXTRAS_GROUP)
         
-        joint_n = cn + '_RightToeBase'
+        # orient constraint
+        nB = cn + '_RightFoot_FRoll_LocB'
+        n = nB + '_orientConstraint_RightToeBase'
+        cmds.orientConstraint( nB, cn + '_RightToeBase', mo=True, n=n)
+        cmds.parent(n, self.CONTROLS_EXTRAS_GROUP)
+
+        nB = cn + '_LeftFoot_FRoll_LocB'
+        n = nB + '_orientConstraint_LeftToeBase'
+        cmds.orientConstraint( nB, cn + '_LeftToeBase', mo=True, n=n)
+        cmds.parent(n, self.CONTROLS_EXTRAS_GROUP)
+
         nC = cn + '_RightFoot_FRoll_LocC'
-        cmds.spaceLocator(n=nC)
-        self.pvt_align_control(joint_n, nC)
-        
-        joint_n = cn + '_RightToeEnd'
-        nB = cn + '_RightFoot_FRoll_LocD'
-        cmds.spaceLocator(n=nB)
-        self.pvt_align_control(joint_n, nB)
+        n = nC + '_orientConstraint_RightFoot'
+        cmds.orientConstraint( nC, cn + '_RightFoot', mo=True, n=n)
+        cmds.parent(n, self.CONTROLS_EXTRAS_GROUP)
 
-        joint_n = cn + '_RightFoot'
-        nA = cn + '_RightFoot_FRoll_LocA'
-        cmds.spaceLocator(n=nA)
-        #self.pvt_align_control(joint_n, nA)
-        gu.move_to_x_pos_of(nD, nA)
-        gu.move_to_z_pos_of(nD, nA)
-        gu.move_to_y_pos_of(nC, nA)
+        nC = cn + '_LeftFoot_FRoll_LocC'
+        n = nC + '_orientConstraint_LeftFoot'
+        cmds.orientConstraint( nC, cn + '_LeftFoot', mo=True, n=n)
+        cmds.parent(n, self.CONTROLS_EXTRAS_GROUP)
 
-        cmds.parent(nA, self.CONTROLS_EXTRAS_GROUP)
-        cmds.parent(nB, nA) 
-        cmds.parent(nC, nB)
-        cmds.parent(nD, nC)
-        gu.freeze_transformations_by_name(nD)
-        gu.freeze_transformations_by_name(nC)
-        gu.freeze_transformations_by_name(nB)
-        gu.freeze_transformations_by_name(nA)
 
 def lock_trans(obj):
     cmds.setAttr(obj + '.tx', lock=True)

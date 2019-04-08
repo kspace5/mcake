@@ -174,15 +174,18 @@ def build_controls(cnFld, *pArgs):
     cl_LeftUpLeg = control_builder_proc(prefix=n, radius=8, hr=0.02, scale=(1,1.5,2))
     cb.add_orient_constraint_control(target=n, parent=cl_hips)
     rct.lock_trans_and_scale(cl_LeftUpLeg)
+
     # IK Handles - note: rotate for IK is useless
     n = 'RightFoot_ikHandle'
-    cl_RightUpLeg = control_builder_proc(prefix=n, radius=5, hr=0.02, scale=(1,1.5,1.5))
+    #cl_RightUpLeg = control_builder_proc(prefix=n, radius=5, hr=0.02, scale=(1,1.5,1.5))
     #cb.add_point_constraint_control(target=n, parent=cl_global)
     rct.lock_rotate_and_scale(cl_RightUpLeg)
+    
     n = 'LeftFoot_ikHandle'
-    cl_LeftUpLeg = control_builder_proc(prefix=n, radius=5, hr=0.02, scale=(1,1.5,1.5))
+    #cl_LeftUpLeg = control_builder_proc(prefix=n, radius=5, hr=0.02, scale=(1,1.5,1.5))
     #cb.add_point_constraint_control(target=n, parent=cl_global)
     rct.lock_rotate_and_scale(cl_LeftUpLeg)
+
     # IK Pole Vector
     n = 'RightFoot_ikHandle_poleVec'
     cl_RightLeg_PoleVec = control_builder_proc(prefix=n, radius=2, axis=(0,0,1), hr=0.02, scale=(1,3,1.5))
