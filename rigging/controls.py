@@ -161,6 +161,38 @@ class BipedControlBuilder:
         gu.freeze_transformations_by_name(nB)
         gu.freeze_transformations_by_name(nA)
 
+        joint_n = cn + '_RightFoot'
+        nD = cn + '_RightFoot_FRoll_LocB'
+        cmds.spaceLocator(n=nD)
+        self.pvt_align_control(joint_n, nD)
+        
+        joint_n = cn + '_RightToeBase'
+        nC = cn + '_RightFoot_FRoll_LocC'
+        cmds.spaceLocator(n=nC)
+        self.pvt_align_control(joint_n, nC)
+        
+        joint_n = cn + '_RightToeEnd'
+        nB = cn + '_RightFoot_FRoll_LocD'
+        cmds.spaceLocator(n=nB)
+        self.pvt_align_control(joint_n, nB)
+
+        joint_n = cn + '_RightFoot'
+        nA = cn + '_RightFoot_FRoll_LocA'
+        cmds.spaceLocator(n=nA)
+        #self.pvt_align_control(joint_n, nA)
+        gu.move_to_x_pos_of(nD, nA)
+        gu.move_to_z_pos_of(nD, nA)
+        gu.move_to_y_pos_of(nC, nA)
+
+        cmds.parent(nA, self.CONTROLS_EXTRAS_GROUP)
+        cmds.parent(nB, nA) 
+        cmds.parent(nC, nB)
+        cmds.parent(nD, nC)
+        gu.freeze_transformations_by_name(nD)
+        gu.freeze_transformations_by_name(nC)
+        gu.freeze_transformations_by_name(nB)
+        gu.freeze_transformations_by_name(nA)
+
 def lock_trans(obj):
     cmds.setAttr(obj + '.tx', lock=True)
     cmds.setAttr(obj + '.ty', lock=True)
