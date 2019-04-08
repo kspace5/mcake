@@ -231,25 +231,25 @@ class BipedControlBuilder:
         cn = self.cn
         # Custom attributes and driven keys
         n = cn + '_ctrl_RightFoot_FRoll_LocA'
-        gu.add_attribute_float_a(n, 'midRoll', min=0, max=50, default=0, keyable=True)
+        gu.add_attribute_float_a(n, 'midRoll', type='flaot', min=0, max=50, default=0, keyable=True)
         nC = cn + '_RightFoot_FRoll_LocC.rotateX'
         gu.set_driven_key(n + '.midRoll',nC, 0, 0)
         gu.set_driven_key(n + '.midRoll',nC, 50, 50)
 
         n = cn + '_ctrl_LeftFoot_FRoll_LocA'
-        gu.add_attribute_float_a(n, 'midRoll', min=0, max=50, default=0, keyable=True)
+        gu.add_attribute_float_a(n, 'midRoll', type='flaot', min=0, max=50, default=0, keyable=True)
         nC = cn + '_LeftFoot_FRoll_LocC.rotateX'
         gu.set_driven_key(n + '.midRoll',nC, 0, 0)
         gu.set_driven_key(n + '.midRoll',nC, 50, 50)
 
         n = cn + '_ctrl_RightFoot_FRoll_LocA'
-        gu.add_attribute_float_a(n, 'toeRaise', min=0, max=120, default=0, keyable=True)
+        gu.add_attribute_float_a(n, 'toeRaise', type='flaot', min=0, max=120, default=0, keyable=True)
         nC = cn + '_RightFoot_FRoll_LocB.rotateX'
         gu.set_driven_key(n + '.toeRaise',nC, 0, 0)
         gu.set_driven_key(n + '.toeRaise',nC, 120, 120)
 
         n = cn + '_ctrl_LeftFoot_FRoll_LocA'
-        gu.add_attribute_float_a(n, 'toeRaise', min=0, max=120, default=0, keyable=True)
+        gu.add_attribute_float_a(n, 'toeRaise', type='flaot', min=0, max=120, default=0, keyable=True)
         nC = cn + '_LeftFoot_FRoll_LocB.rotateX'
         gu.set_driven_key(n + '.toeRaise',nC, 0, 0)
         gu.set_driven_key(n + '.toeRaise',nC, 120, 120)

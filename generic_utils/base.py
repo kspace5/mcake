@@ -74,8 +74,9 @@ def move_to_z_pos_of(src_obj, trg_obj):
     cmds.move(cur_loc[0],cur_loc[1], loc[2], trg_obj, absolute=True)
 
 # Custom Attributes
-def add_attribute_float_a(tgt, name, **p):
-    cmds.addAttr(tgt, ln=name, at="float", min=p['min'], max=p['max'], dv=p['default'], k=p['keyable'])
+# example: gu.add_attribute(tgt, 'toeRaise', type='float', min=0, max=120, default=0, keyable=True)
+def add_attribute(tgt, name, **p):
+    cmds.addAttr(tgt, ln=name, at=p['type'], min=p['min'], max=p['max'], dv=p['default'], k=p['keyable'])
 
 def set_driven_key(driver_attr, driven_attr, driver_val, driven_val):
     cmds.setDrivenKeyframe(driven_attr, cd=driver_attr,  dv=driver_val, v=driven_val)
