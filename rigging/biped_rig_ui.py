@@ -101,6 +101,8 @@ def build_controls(cnFld, *pArgs):
     cb.bind_global_control()
 
     control_builder_proc = cb.build_torus_control
+    
+    # Create IK Handles
     cb.create_IK_Handles()
     n = 'COG'
     cl_cog = control_builder_proc(prefix=n, radius=25, hr=0.02, scale=(1,2,1))
@@ -175,17 +177,6 @@ def build_controls(cnFld, *pArgs):
     cb.add_orient_constraint_control(target=n, parent=cl_hips)
     rct.lock_trans_and_scale(cl_LeftUpLeg)
 
-    # IK Handles - note: rotate for IK is useless
-    n = 'RightFoot_ikHandle'
-    #cl_RightUpLeg = control_builder_proc(prefix=n, radius=5, hr=0.02, scale=(1,1.5,1.5))
-    #cb.add_point_constraint_control(target=n, parent=cl_global)
-    rct.lock_rotate_and_scale(cl_RightUpLeg)
-    
-    n = 'LeftFoot_ikHandle'
-    #cl_LeftUpLeg = control_builder_proc(prefix=n, radius=5, hr=0.02, scale=(1,1.5,1.5))
-    #cb.add_point_constraint_control(target=n, parent=cl_global)
-    rct.lock_rotate_and_scale(cl_LeftUpLeg)
-
     # IK Pole Vector
     n = 'RightFoot_ikHandle_poleVec'
     cl_RightLeg_PoleVec = control_builder_proc(prefix=n, radius=2, axis=(0,0,1), hr=0.02, scale=(1,3,1.5))
@@ -197,6 +188,18 @@ def build_controls(cnFld, *pArgs):
     
     # Foot Roll Controls
     cb.create_footRoll_controls()
+
+    # IK Handles Foot Roll controls - note: rotate for IK is useless
+    n = 'RightFoot_FRoll_LocA'
+    cl_RightUpLeg = control_builder_proc(prefix=n, radius=5, hr=0.02, scale=(1,1.5,1.5))
+    cb.add_point_constraint_control(target=n, parent=cl_global)
+    rct.lock_scale(cl_RightUpLeg)
+
+    n = 'LeftFoot_FRoll_LocA'
+    cl_LeftUpLeg = control_builder_proc(prefix=n, radius=5, hr=0.02, scale=(1,1.5,1.5))
+    cb.add_point_constraint_control(target=n, parent=cl_global)
+    rct.lock_scale(cl_LeftUpLeg)
+
 
 def build_complete_rig(cnFld, *pArgs):
     clean_up_joint_orient(cnFld)
