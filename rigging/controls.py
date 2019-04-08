@@ -227,6 +227,32 @@ class BipedControlBuilder:
         cmds.orientConstraint( nC, cn + '_LeftFoot', mo=True, n=n)
         cmds.parent(n, self.CONTROLS_EXTRAS_GROUP)
 
+    def create_footRoll_driven_keys(self, **p):
+        cn = self.cn
+        # Custom attributes and driven keys
+        n = cn + '_ctrl_RightFoot_FRoll_LocA'
+        gu.add_attribute_float_a(n, 'midRoll', min=0, max=100, default=0, keyable=True)
+        nC = cn + '_RightFoot_FRoll_LocC.rotateX'
+        gu.set_driven_key(n + '.midRoll',nC, 0, 0)
+        gu.set_driven_key(n + '.midRoll',nC, 10, 20)
+
+        n = cn + '_ctrl_LeftFoot_FRoll_LocA'
+        gu.add_attribute_float_a(n, 'midRoll', min=0, max=100, default=0, keyable=True)
+        nC = cn + '_LeftFoot_FRoll_LocC.rotateX'
+        gu.set_driven_key(n + '.midRoll',nC, 0, 0)
+        gu.set_driven_key(n + '.midRoll',nC, 10, 20)
+
+        n = cn + '_ctrl_RightFoot_FRoll_LocA'
+        gu.add_attribute_float_a(n, 'toeRaise', min=0, max=100, default=0, keyable=True)
+        nC = cn + '_RightFoot_FRoll_LocB.rotateX'
+        gu.set_driven_key(n + '.toeRaise',nC, 0, 0)
+        gu.set_driven_key(n + '.toeRaise',nC, 10, 20)
+
+        n = cn + '_ctrl_LeftFoot_FRoll_LocA'
+        gu.add_attribute_float_a(n, 'toeRaise', min=0, max=100, default=0, keyable=True)
+        nC = cn + '_LeftFoot_FRoll_LocB.rotateX'
+        gu.set_driven_key(n + '.toeRaise',nC, 0, 0)
+        gu.set_driven_key(n + '.toeRaise',nC, 10, 20)
 
 def lock_trans(obj):
     cmds.setAttr(obj + '.tx', lock=True)

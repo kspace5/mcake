@@ -200,6 +200,7 @@ def build_controls(cnFld, *pArgs):
     cb.add_parent_constraint_control(target=n, parent=cl_global)
     rct.lock_scale(cl_LeftUpLeg)
 
+    cb.create_footRoll_driven_keys()
 
 def build_complete_rig(cnFld, *pArgs):
     clean_up_joint_orient(cnFld)

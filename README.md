@@ -9,4 +9,9 @@ reload(gu)
 #gu.freeze_and_center()
 #gu.zero_x_pivot()
 gu.duplicate_and_mirror_x()
+
+# For Biped Rig
+import mcake.rigging.controls as rct
+reload(br)
+br.createRiggingToolsUI()
 ```
