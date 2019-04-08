@@ -246,13 +246,13 @@ class BipedControlBuilder:
         gu.add_attribute_float_a(n, 'toeRaise', min=0, max=100, default=0, keyable=True)
         nC = cn + '_RightFoot_FRoll_LocB.rotateX'
         gu.set_driven_key(n + '.toeRaise',nC, 0, 0)
-        gu.set_driven_key(n + '.toeRaise',nC, 10, 20)
+        gu.set_driven_key(n + '.toeRaise',nC, 50, 50)
 
         n = cn + '_ctrl_LeftFoot_FRoll_LocA'
         gu.add_attribute_float_a(n, 'toeRaise', min=0, max=100, default=0, keyable=True)
         nC = cn + '_LeftFoot_FRoll_LocB.rotateX'
         gu.set_driven_key(n + '.toeRaise',nC, 0, 0)
-        gu.set_driven_key(n + '.toeRaise',nC, 10, 20)
+        gu.set_driven_key(n + '.toeRaise',nC, 50, 50)
 
 def lock_trans(obj):
     cmds.setAttr(obj + '.tx', lock=True)
