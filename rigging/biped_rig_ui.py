@@ -192,12 +192,12 @@ def build_controls(cnFld, *pArgs):
     # IK Handles Foot Roll controls - note: rotate for IK is useless
     n = 'RightFoot_FRoll_LocA'
     cl_RightUpLeg = control_builder_proc(prefix=n, radius=5, hr=0.02, scale=(1,1.5,1.5))
-    cb.add_point_constraint_control(target=n, parent=cl_global)
+    cb.add_parent_constraint_control(target=n, parent=cl_global)
     rct.lock_scale(cl_RightUpLeg)
 
     n = 'LeftFoot_FRoll_LocA'
     cl_LeftUpLeg = control_builder_proc(prefix=n, radius=5, hr=0.02, scale=(1,1.5,1.5))
-    cb.add_point_constraint_control(target=n, parent=cl_global)
+    cb.add_parent_constraint_control(target=n, parent=cl_global)
     rct.lock_scale(cl_LeftUpLeg)
 
 
