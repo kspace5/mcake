@@ -264,6 +264,9 @@ class BipedControlBuilder:
         self.pvt_add_bendMid_drivers('RightHand')
         self.pvt_add_bendMid_drivers('LeftHand')
 
+        self.pvt_add_spreadBase_drivers('RightHand')
+        self.pvt_add_spreadBase_drivers('LeftHand')
+
     def pvt_add_curl_drivers(self, hand):
         n = self.cn + '_ctrl_' + hand
         gu.add_attribute(n, 'curlThumb', type='float', min=-100, max=100, default=0, keyable=True)
@@ -357,6 +360,25 @@ class BipedControlBuilder:
         gu.set_driven_key(ctrl + '.bendMid' + f_name,attr, 0, cur_val)
         gu.set_driven_key(ctrl + '.bendMid' + f_name,attr, 100, cur_val + 100)
         
+    def pvt_add_spreadBase_drivers(self, hand):
+        n = self.cn + '_ctrl_' + hand
+        gu.add_attribute(n, 'spreadBaseAll', type='float', min=-100, max=100, default=0, keyable=True)
+
+        # Each finger gets a scaled spread effect
+        self.pvt_add_finger_driven_keys_spreadBase(n, hand, 'Thumb', 1.0)
+        self.pvt_add_finger_driven_keys_spreadBase(n, hand, 'Index', 0.8)
+        self.pvt_add_finger_driven_keys_spreadBase(n, hand, 'Middle', 0.4)
+        self.pvt_add_finger_driven_keys_spreadBase(n, hand, 'Ring', -0.4)
+        self.pvt_add_finger_driven_keys_spreadBase(n, hand, 'Pinky', -0.8)
+
+    def pvt_add_finger_driven_keys_spreadBase(self, ctrl, prefix, f_name, scale):
+        finger_prefix = self.cn + '_' + prefix
+
+        joint_rot = lambda name, i: finger_prefix + name + str(i) + '.rotateY'
+        attr = joint_rot(f_name, 1)
+        cur_val = cmds.getAttr(attr)
+        gu.set_driven_key(ctrl + '.spreadBaseAll',attr, 0, cur_val)
+        gu.set_driven_key(ctrl + '.spreadBaseAll',attr, 100, cur_val + (100 * scale))
 
 def lock_trans(obj):
     cmds.setAttr(obj + '.tx', lock=True)
