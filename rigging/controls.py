@@ -254,19 +254,24 @@ class BipedControlBuilder:
         gu.set_driven_key(n + '.toeRaise',nC, 0, 0)
         gu.set_driven_key(n + '.toeRaise',nC, 120, 120)
 
+    # Aggregate - finger driver builder
     def add_finger_bend_and_curl_attributes(self, **p):
-        #cn = self.cn
-        #n = cn + '_ctrl_RightHand'
         self.pvt_add_curl_drivers('RightHand')
         self.pvt_add_curl_drivers('LeftHand')
+        
+        self.pvt_add_bendBase_drivers('RightHand')
+        self.pvt_add_bendBase_drivers('LeftHand')
+        self.pvt_add_bendMid_drivers('RightHand')
+        self.pvt_add_bendMid_drivers('LeftHand')
 
     def pvt_add_curl_drivers(self, hand):
         n = self.cn + '_ctrl_' + hand
-        gu.add_attribute(n, 'curlThumb', type='float', min=0, max=100, default=0, keyable=True)
-        gu.add_attribute(n, 'curlIndex', type='float', min=0, max=100, default=0, keyable=True)
-        gu.add_attribute(n, 'curlMiddle', type='float', min=0, max=100, default=0, keyable=True)
-        gu.add_attribute(n, 'curlRing', type='float', min=0, max=100, default=0, keyable=True)
-        gu.add_attribute(n, 'curlPinky', type='float', min=0, max=100, default=0, keyable=True)
+        gu.add_attribute(n, 'curlThumb', type='float', min=-100, max=100, default=0, keyable=True)
+        gu.add_attribute(n, 'curlIndex', type='float', min=-100, max=100, default=0, keyable=True)
+        gu.add_attribute(n, 'curlMiddle', type='float', min=-100, max=100, default=0, keyable=True)
+        gu.add_attribute(n, 'curlRing', type='float', min=-100, max=100, default=0, keyable=True)
+        gu.add_attribute(n, 'curlPinky', type='float', min=-100, max=100, default=0, keyable=True)
+        gu.add_attribute(n, 'curlAll', type='float', min=-100, max=100, default=0, keyable=True)
 
         self.pvt_add_finger_driven_keys_curl(n, hand, 'Thumb')
         self.pvt_add_finger_driven_keys_curl(n, hand, 'Index')
@@ -274,22 +279,84 @@ class BipedControlBuilder:
         self.pvt_add_finger_driven_keys_curl(n, hand, 'Ring')
         self.pvt_add_finger_driven_keys_curl(n, hand, 'Pinky')
 
-    def pvt_add_finger_driven_keys_curl(self, ctrl, prefix, f_name):
+        # Now set curl all drivers
+        all = True
+        self.pvt_add_finger_driven_keys_curl(n, hand, 'Thumb', all)
+        self.pvt_add_finger_driven_keys_curl(n, hand, 'Index', all)
+        self.pvt_add_finger_driven_keys_curl(n, hand, 'Middle', all)
+        self.pvt_add_finger_driven_keys_curl(n, hand, 'Ring', all)
+        self.pvt_add_finger_driven_keys_curl(n, hand, 'Pinky', all)
+
+    def pvt_add_finger_driven_keys_curl(self, ctrl, prefix, f_name, all=False):
+        finger_prefix = self.cn + '_' + prefix
+
+        joint_rot_attr_proc = lambda name, i: finger_prefix + name + str(i) + '.rotateZ'
+        attr_driver_proc = lambda f_name: ctrl + '.curlAll' if all is True else ctrl + '.curl' + f_name
+        
+        attr_driver = attr_driver_proc(f_name)
+        
+        attr_driven = joint_rot_attr_proc(f_name, 1)
+        cur_val = cmds.getAttr(attr_driven)
+        gu.set_driven_key(attr_driver, attr_driven, 0, cur_val)
+        gu.set_driven_key(attr_driver, attr_driven, 100, cur_val + 100)
+        attr_driven = joint_rot_attr_proc(f_name, 2)
+        cur_val = cmds.getAttr(attr_driven)
+        gu.set_driven_key(attr_driver, attr_driven, 0, cur_val)
+        gu.set_driven_key(attr_driver, attr_driven, 100, cur_val + 100)
+        attr_driven = joint_rot_attr_proc(f_name, 3)
+        cur_val = cmds.getAttr(attr_driven)
+        gu.set_driven_key(attr_driver, attr_driven, 0, cur_val)
+        gu.set_driven_key(attr_driver, attr_driven, 100, cur_val + 100)
+
+    def pvt_add_bendBase_drivers(self, hand):
+        n = self.cn + '_ctrl_' + hand
+        gu.add_attribute(n, 'bendBaseThumb', type='float', min=-100, max=100, default=0, keyable=True)
+        gu.add_attribute(n, 'bendBaseIndex', type='float', min=-100, max=100, default=0, keyable=True)
+        gu.add_attribute(n, 'bendBaseMiddle', type='float', min=-100, max=100, default=0, keyable=True)
+        gu.add_attribute(n, 'bendBaseRing', type='float', min=-100, max=100, default=0, keyable=True)
+        gu.add_attribute(n, 'bendBasePinky', type='float', min=-100, max=100, default=0, keyable=True)
+
+        self.pvt_add_finger_driven_keys_bendBase(n, hand, 'Thumb')
+        self.pvt_add_finger_driven_keys_bendBase(n, hand, 'Index')
+        self.pvt_add_finger_driven_keys_bendBase(n, hand, 'Middle')
+        self.pvt_add_finger_driven_keys_bendBase(n, hand, 'Ring')
+        self.pvt_add_finger_driven_keys_bendBase(n, hand, 'Pinky')
+
+    def pvt_add_finger_driven_keys_bendBase(self, ctrl, prefix, f_name):
         finger_prefix = self.cn + '_' + prefix
 
         joint_rot = lambda name, i: finger_prefix + name + str(i) + '.rotateZ'
         attr = joint_rot(f_name, 1)
         cur_val = cmds.getAttr(attr)
-        gu.set_driven_key(ctrl + '.curl' + f_name,attr, 0, cur_val)
-        gu.set_driven_key(ctrl + '.curl' + f_name,attr, 100, cur_val + 100)
+        gu.set_driven_key(ctrl + '.bendBase' + f_name,attr, 0, cur_val)
+        gu.set_driven_key(ctrl + '.bendBase' + f_name,attr, 100, cur_val + 100)
+       
+
+    def pvt_add_bendMid_drivers(self, hand):
+        n = self.cn + '_ctrl_' + hand
+        gu.add_attribute(n, 'bendMidThumb', type='float', min=0, max=100, default=0, keyable=True)
+        gu.add_attribute(n, 'bendMidIndex', type='float', min=0, max=100, default=0, keyable=True)
+        gu.add_attribute(n, 'bendMidMiddle', type='float', min=0, max=100, default=0, keyable=True)
+        gu.add_attribute(n, 'bendMidRing', type='float', min=0, max=100, default=0, keyable=True)
+        gu.add_attribute(n, 'bendMidPinky', type='float', min=0, max=100, default=0, keyable=True)
+
+        self.pvt_add_finger_driven_keys_bendMid(n, hand, 'Thumb')
+        self.pvt_add_finger_driven_keys_bendMid(n, hand, 'Index')
+        self.pvt_add_finger_driven_keys_bendMid(n, hand, 'Middle')
+        self.pvt_add_finger_driven_keys_bendMid(n, hand, 'Ring')
+        self.pvt_add_finger_driven_keys_bendMid(n, hand, 'Pinky')
+
+    def pvt_add_finger_driven_keys_bendMid(self, ctrl, prefix, f_name):
+        finger_prefix = self.cn + '_' + prefix
+
+        joint_rot = lambda name, i: finger_prefix + name + str(i) + '.rotateZ'
+        attr = joint_rot(f_name, 1)
+       
         attr = joint_rot(f_name, 2)
         cur_val = cmds.getAttr(attr)
-        gu.set_driven_key(ctrl + '.curl' + f_name,attr, 0, cur_val)
-        gu.set_driven_key(ctrl + '.curl' + f_name,attr, 100, cur_val + 100)
-        attr = joint_rot(f_name, 3)
-        cur_val = cmds.getAttr(attr)
-        gu.set_driven_key(ctrl + '.curl' + f_name,attr, 0, cur_val)
-        gu.set_driven_key(ctrl + '.curl' + f_name,attr, 100, cur_val + 100)
+        gu.set_driven_key(ctrl + '.bendMid' + f_name,attr, 0, cur_val)
+        gu.set_driven_key(ctrl + '.bendMid' + f_name,attr, 100, cur_val + 100)
+        
 
 def lock_trans(obj):
     cmds.setAttr(obj + '.tx', lock=True)
