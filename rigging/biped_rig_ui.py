@@ -32,7 +32,7 @@ def createRiggingToolsUI():
     cmds.button( label='Fix All Joint Orient', width=100, height=30, command=functools.partial( clean_up_joint_orient, cnFld) )
     cmds.button( label='Check Joints Integrity', command=functools.partial( check_joints_integrity, cnFld) )
     cmds.button( label='Set Joint Params For Rigging', command=functools.partial( set_joint_attributes_for_rigging, cnFld) )
-    cmds.button( label='Create IK Handles', command=functools.partial( create_IK_Handles, cnFld) )
+    #cmds.button( label='Create IK Handles', command=functools.partial( cb.create_IK_Handles, cnFld) )
     cmds.button( label='Create Controls', command=functools.partial( build_controls, cnFld) )
     cmds.button( label='Create Biped Control Rig', backgroundColor=(0.9,0.6,0.3), command=functools.partial( build_complete_rig, cnFld) )
     
@@ -202,8 +202,10 @@ def build_controls(cnFld, *pArgs):
 
     cb.create_footRoll_driven_keys()
 
+    cb.add_finger_bend_and_curl_attributes()
+
 def build_complete_rig(cnFld, *pArgs):
-    clean_up_joint_orient(cnFld)
-    check_joints_integrity(cnFld)
+    #clean_up_joint_orient(cnFld)
+    #check_joints_integrity(cnFld)
     set_joint_attributes_for_rigging(cnFld)
     build_controls(cnFld)
