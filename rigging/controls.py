@@ -255,6 +255,18 @@ class BipedControlBuilder:
         gu.set_driven_key(n + '.baseRoll',nC, 90, 90)
 
         n = cn + '_ctrl_RightFoot_FRoll_LocA'
+        gu.add_attribute(n, 'baseRotate', type='float', min=-45, max=45, default=0, keyable=True)
+        nC = cn + '_RightFoot_FRoll_LocA.rotateY'
+        gu.set_driven_key(n + '.baseRotate',nC, -45, -45)
+        gu.set_driven_key(n + '.baseRotate',nC, 45, 45)
+        
+        n = cn + '_ctrl_LeftFoot_FRoll_LocA'
+        gu.add_attribute(n, 'baseRotate', type='float', min=-45, max=45, default=0, keyable=True)
+        nC = cn + '_LeftFoot_FRoll_LocA.rotateY'
+        gu.set_driven_key(n + '.baseRotate',nC, -45, -45)
+        gu.set_driven_key(n + '.baseRotate',nC, 45, 45)
+        
+        n = cn + '_ctrl_RightFoot_FRoll_LocA'
         gu.add_attribute(n, 'toeRaise', type='float', min=0, max=120, default=0, keyable=True)
         nC = cn + '_RightFoot_FRoll_LocB.rotateX'
         gu.set_driven_key(n + '.toeRaise',nC, 0, 0)
