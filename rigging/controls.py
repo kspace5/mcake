@@ -243,6 +243,18 @@ class BipedControlBuilder:
         gu.set_driven_key(n + '.midRoll',nC, 50, 50)
 
         n = cn + '_ctrl_RightFoot_FRoll_LocA'
+        gu.add_attribute(n, 'baseRoll', type='float', min=-90, max=90, default=0, keyable=True)
+        nC = cn + '_RightFoot_FRoll_LocA.rotateX'
+        gu.set_driven_key(n + '.baseRoll',nC, -90, -90)
+        gu.set_driven_key(n + '.baseRoll',nC, 90, 90)
+
+        n = cn + '_ctrl_LeftFoot_FRoll_LocA'
+        gu.add_attribute(n, 'baseRoll', type='float', min=-90, max=90, default=0, keyable=True)
+        nC = cn + '_LeftFoot_FRoll_LocA.rotateX'
+        gu.set_driven_key(n + '.baseRoll',nC, -90, -90)
+        gu.set_driven_key(n + '.baseRoll',nC, 90, 90)
+
+        n = cn + '_ctrl_RightFoot_FRoll_LocA'
         gu.add_attribute(n, 'toeRaise', type='float', min=0, max=120, default=0, keyable=True)
         nC = cn + '_RightFoot_FRoll_LocB.rotateX'
         gu.set_driven_key(n + '.toeRaise',nC, 0, 0)
@@ -380,20 +392,26 @@ class BipedControlBuilder:
         gu.set_driven_key(ctrl + '.spreadBaseAll',attr, 0, cur_val)
         gu.set_driven_key(ctrl + '.spreadBaseAll',attr, 100, cur_val + (100 * scale))
 
+def lock_visibility(obj):
+    cmds.setAttr(obj + '.v', lock=True)
+
 def lock_trans(obj):
     cmds.setAttr(obj + '.tx', lock=True)
     cmds.setAttr(obj + '.ty', lock=True)
     cmds.setAttr(obj + '.tz', lock=True)
+    cmds.setAttr(obj + '.v', lock=True)
 
 def lock_scale(obj):
     cmds.setAttr(obj + '.sx', lock=True)
     cmds.setAttr(obj + '.sy', lock=True)
     cmds.setAttr(obj + '.sz', lock=True)
+    cmds.setAttr(obj + '.v', lock=True)
 
 def lock_rotate(obj):
     cmds.setAttr(obj + '.rx', lock=True)
     cmds.setAttr(obj + '.ry', lock=True)
     cmds.setAttr(obj + '.rz', lock=True)
+    cmds.setAttr(obj + '.v', lock=True)
 
 def lock_trans_and_scale(obj):
     lock_trans(obj)
