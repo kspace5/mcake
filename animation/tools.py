@@ -1,3 +1,4 @@
+# For reference - not used directly yet
 def swap_key_values():
     objs = cmds.ls(sl=True)
     a = objs[0]
