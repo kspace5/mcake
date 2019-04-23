@@ -28,16 +28,26 @@ def createRiggingToolsUI():
     cmds.button( label='Mirror tz', command=functools.partial(eh_mirror_vals, ['tz'] ))
 
 
-    cmds.button( label='Copy Rot Trans', command=functools.partial(eh_copy_vals, ['rx','ry','rz','tx','ty','tz'] ))
-    cmds.button( label='Copy Named', command=functools.partial(eh_copy_given, cnFld))
+    cmds.button( label='Swap Rot Trans', command=functools.partial(eh_swap_vals, ['rx','ry','rz','tx','ty','tz'] ))
+    cmds.button( label='Swap Named', command=functools.partial(eh_swap_given, cnFld))
     cmds.separator( h=10, style='none' )
-    cmds.button( label='Copy rx', command=functools.partial(eh_copy_vals, ['rx'] ))
-    cmds.button( label='Copy ry', command=functools.partial(eh_copy_vals, ['ry'] ))
-    cmds.button( label='Copy rz', command=functools.partial(eh_copy_vals, ['rz'] ))
-    cmds.button( label='Copy tx', command=functools.partial(eh_copy_vals, ['tx'] ))
-    cmds.button( label='Copy ty', command=functools.partial(eh_copy_vals, ['ty'] ))
-    cmds.button( label='Copy tz', command=functools.partial(eh_copy_vals, ['tz'] ))
+    cmds.button( label='Swap rx', command=functools.partial(eh_swap_vals, ['rx'] ))
+    cmds.button( label='Swap ry', command=functools.partial(eh_swap_vals, ['ry'] ))
+    cmds.button( label='Swap rz', command=functools.partial(eh_swap_vals, ['rz'] ))
+    cmds.button( label='Swap tx', command=functools.partial(eh_swap_vals, ['tx'] ))
+    cmds.button( label='Swap ty', command=functools.partial(eh_swap_vals, ['ty'] ))
+    cmds.button( label='Swap tz', command=functools.partial(eh_swap_vals, ['tz'] ))
     
+    cmds.button( label='Trans Rot Trans', command=functools.partial(eh_trans_vals, ['rx','ry','rz','tx','ty','tz'] ))
+    cmds.button( label='Trans Named', command=functools.partial(eh_trans_given, cnFld))
+    cmds.separator( h=10, style='none' )
+    cmds.button( label='Trans rx', command=functools.partial(eh_trans_vals, ['rx'] ))
+    cmds.button( label='Trans ry', command=functools.partial(eh_trans_vals, ['ry'] ))
+    cmds.button( label='Trans rz', command=functools.partial(eh_trans_vals, ['rz'] ))
+    cmds.button( label='Trans tx', command=functools.partial(eh_trans_vals, ['tx'] ))
+    cmds.button( label='Trans ty', command=functools.partial(eh_trans_vals, ['ty'] ))
+    cmds.button( label='Trans tz', command=functools.partial(eh_trans_vals, ['tz'] ))
+
     # Cancel button
     cmds.button( label='Cancel', command=functools.partial( g_cancelCallback, windowID))
 
@@ -48,14 +58,17 @@ def g_cancelCallback(windowID,  *pArgs ):
     if cmds.window( windowID, exists=True ):
         cmds.deleteUI( windowID )
 
-def eh_copy_given(cnFld, *p):
-    eh_copy_vals([uu.text_val(cnFld)])
+def eh_swap_given(cnFld, *p):
+    eh_swap_vals([uu.text_val(cnFld)])
 
 def eh_mirror_given(cnFld, *p):
     eh_mirror_vals([uu.text_val(cnFld)])
 
+def eh_trans_given(cnFld, *p):
+    eh_trans_vals([uu.text_val(cnFld)])
+
 # copy([rx,ry,rz])
-def eh_copy_vals(attrs, *p):
+def eh_swap_vals(attrs, *p):
     print(attrs)
     objs = cmds.ls(sl=True)
     if len(objs) == 0:
@@ -63,11 +76,9 @@ def eh_copy_vals(attrs, *p):
 
     a = objs[0]
     b = objs[1]
-    avals = []
-    bvals = []
 
     for attr in attrs:
-        print('Copying ', attr)
+        print('Swapping ', attr)
         ta = cmds.getAttr(a + '.' + attr)
         tb = cmds.getAttr(b + '.' + attr)
         cmds.setAttr(a + '.' + attr, tb)
@@ -82,8 +93,6 @@ def eh_mirror_vals(attrs, *p):
 
     a = objs[0]
     b = objs[1]
-    avals = []
-    bvals = []
 
     for attr in attrs:
         ta = cmds.getAttr(a + '.' + attr)
@@ -92,3 +101,19 @@ def eh_mirror_vals(attrs, *p):
         cmds.setAttr(b + '.' + attr, -ta)
 
     print("Done key value mirror for", attrs)
+
+def eh_trans_vals(attrs, *p):
+    print(attrs)
+    objs = cmds.ls(sl=True)
+    if len(objs) == 0:
+        return
+
+    a = objs[0]
+    b = objs[1]
+
+    for attr in attrs:
+        print('Swapping ', attr)
+        ta = cmds.getAttr(a + '.' + attr)
+        cmds.setAttr(b + '.' + attr, ta)
+
+    print("Done key value tranfer for", attrs)
