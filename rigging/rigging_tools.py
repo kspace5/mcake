@@ -18,7 +18,7 @@ def createRiggingToolsUI():
     cmds.separator( h=10, style='none' )
 
     cmds.button( label='Mirror Rot Trans', command=functools.partial(eh_mirror_vals, ['rx','ry','rz','tx','ty','tz'] ))
-    cmds.button( label='Mirror Given', command=functools.partial(eh_mirror_given, cnFld))
+    cmds.button( label='Mirror Named', command=functools.partial(eh_mirror_given, cnFld))
     cmds.separator( h=10, style='none' )
     cmds.button( label='Mirror rx', command=functools.partial(eh_mirror_vals, ['rx'] ))
     cmds.button( label='Mirror ry', command=functools.partial(eh_mirror_vals, ['ry'] ))
@@ -29,7 +29,7 @@ def createRiggingToolsUI():
 
 
     cmds.button( label='Copy Rot Trans', command=functools.partial(eh_copy_vals, ['rx','ry','rz','tx','ty','tz'] ))
-    cmds.button( label='Copy Given', command=functools.partial(eh_copy_given, cnFld))
+    cmds.button( label='Copy Named', command=functools.partial(eh_copy_given, cnFld))
     cmds.separator( h=10, style='none' )
     cmds.button( label='Copy rx', command=functools.partial(eh_copy_vals, ['rx'] ))
     cmds.button( label='Copy ry', command=functools.partial(eh_copy_vals, ['ry'] ))
