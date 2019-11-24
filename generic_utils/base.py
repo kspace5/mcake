@@ -10,6 +10,12 @@ def rename_selected_by_replace(old_str, new_str):
         cmds.rename(obj, str)
         print("Done for " + obj)
 
+def freeze_all_selected():
+    objs = cmds.ls(sl=True)
+    for obj in objs:
+        cmds.makeIdentity(obj, apply=True, t=1, r=1, s=1, n=0, pn=1)
+        print("Freeze transformations done for {0}".format(obj))
+
 # Does center pivot and freeze transforma on all rename_selected_by_replace
 # Super useful method
 def freeze_and_center():

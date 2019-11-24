@@ -44,9 +44,9 @@ class BipedControlBuilder:
         n=self.cn + '_ctrl_' + p['prefix']
         axis = p['axis'] if 'axis' in p else (0,1,0)
         scale = p['scale'] if 'scale' in p else (1,1,1)
-        hr = p['hr'] if 'hr' in p else 0.05 # height ratio
+        hr = p['hr'] if 'hr' in p else 0.01 # height ratio
         r=p['radius']
-        cmds.torus(ax=axis, ssw=0, esw=360, msw=360, r=r, hr=hr, d=3, ut=0, tol=0.01, s=8, nsp=4, ch=1, n=n)
+        cmds.torus(ax=axis, ssw=0, esw=360, msw=360, r=r, hr=hr, d=3, ut=0, tol=0.01, s=16, nsp=4, ch=1, n=n)
         cmds.scale(scale[0], scale[1], scale[2], n, absolute=True)
         return n
 

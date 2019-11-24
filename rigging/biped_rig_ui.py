@@ -13,14 +13,14 @@ reload(rct)
 
 def createRiggingToolsUI():
     
-    windowID = 'BiperRigWindow'
+    windowID = 'BipedRigWindow'
     
     if cmds.window( windowID, exists=True ):
         cmds.deleteUI( windowID )
         
     cmds.window( windowID, title='MCAKE: Biped Rigging Tools', sizeable=False, resizeToFitChildren=True )
     #cmds.rowColumnLayout( numberOfColumns=2, columnWidth=[ (1,120), (2,120) ], columnOffset=[ (1,'right',3) ] )
-    cmds.gridLayout( numberOfColumns=2, cellWidthHeight=(150, 50) )
+    cmds.gridLayout( numberOfColumns=2, cellWidthHeight=(250, 30) )
     
     cmds.separator( h=10, style='none' )
     cmds.separator( h=10, style='none' )
@@ -29,11 +29,8 @@ def createRiggingToolsUI():
     cnFld = cmds.textField( text='BipedX1' )
     cmds.text( label='Root Joint: COG' )
     
-    cmds.button( label='Fix All Joint Orient', width=100, height=30, command=functools.partial( clean_up_joint_orient, cnFld) )
+    cmds.button( label='Freeze Trans + Fix : Joint Orients [to X]', width=100, height=30, command=functools.partial( clean_up_joint_orient, cnFld) )
     cmds.button( label='Check Joints Integrity', command=functools.partial( check_joints_integrity, cnFld) )
-    cmds.button( label='Set Joint Params For Rigging', command=functools.partial( set_joint_attributes_for_rigging, cnFld) )
-    #cmds.button( label='Create IK Handles', command=functools.partial( cb.create_IK_Handles, cnFld) )
-    cmds.button( label='Create Controls', command=functools.partial( build_controls, cnFld) )
     cmds.button( label='Create Biped Control Rig', backgroundColor=(0.9,0.6,0.3), command=functools.partial( build_complete_rig, cnFld) )
     
     cmds.separator( h=10, style='none' )
@@ -48,6 +45,8 @@ def clean_up_joint_orient(cnFld, *pArgs):
     cn = uu.text_val(cnFld)
     # Assumes root is Hips, also select entire hierarchy - cool!
     cmds.select(cn + '_COG', hi=True)
+    # Do a freeze trans on all selected bones
+    gu.freeze_all_selected()
     # This is to point the end joints to the world, instead of random
     jt.orient_joints_to_world_all_selected()
     jt.orient_joints_to_x_all_selected()
@@ -105,85 +104,85 @@ def build_controls(cnFld, *pArgs):
     # Create IK Handles
     cb.create_IK_Handles()
     n = 'COG'
-    cl_cog = control_builder_proc(prefix=n, radius=25, hr=0.02, scale=(1,2,1))
+    cl_cog = control_builder_proc(prefix=n, radius=25, hr=0.05, scale=(1,0.3,1))
     cb.add_parent_constraint_control(target=n, parent=cl_global)
     rct.lock_scale(cl_cog)
     n = 'Hips'
-    cl_hips = control_builder_proc(prefix=n, radius=15, hr=0.02, scale=(1,1.5,1))
+    cl_hips = control_builder_proc(prefix=n, radius=15, hr=0.02, scale=(1,0.7,1))
     cb.add_orient_constraint_control(target=n, parent=cl_cog)
     rct.lock_trans_and_scale(cl_hips)
     n = 'SpineRoot'
-    cl_spineRoot = control_builder_proc(prefix=n, radius=20, hr=0.02, scale=(1,1.5,1))
+    cl_spineRoot = control_builder_proc(prefix=n, radius=20, hr=0.02, scale=(1,0.7,1))
     cb.add_orient_constraint_control(target=n, parent=cl_cog)
     rct.lock_trans_and_scale(cl_spineRoot)
     n = 'Spine'
-    cl_Spine = control_builder_proc(prefix=n, radius=15, hr=0.02, scale=(1,1.5,1))
+    cl_Spine = control_builder_proc(prefix=n, radius=15, hr=0.02, scale=(1,0.7,1))
     cb.add_orient_constraint_control(target=n, parent=cl_spineRoot)
     rct.lock_trans_and_scale(cl_Spine)
     n = 'Spine1'
-    cl_Spine1 = control_builder_proc(prefix=n, radius=15, hr=0.02, scale=(1,1.5,1))
+    cl_Spine1 = control_builder_proc(prefix=n, radius=15, hr=0.02, scale=(1,0.7,1))
     cb.add_orient_constraint_control(target=n, parent=cl_Spine)
     rct.lock_trans_and_scale(cl_Spine1)
     n = 'Spine2'
-    cl_Spine2 = control_builder_proc(prefix=n, radius=20, hr=0.02, scale=(1,1.5,1))
+    cl_Spine2 = control_builder_proc(prefix=n, radius=20, hr=0.02, scale=(1,0.7,1))
     cb.add_orient_constraint_control(target=n, parent=cl_Spine1)
     rct.lock_trans_and_scale(cl_Spine2)
     n = 'Neck'
-    cl_neck = control_builder_proc(prefix=n, radius=10, hr=0.02, scale=(1,1.5,1))
+    cl_neck = control_builder_proc(prefix=n, radius=10, hr=0.02, scale=(1,0.7,1))
     cb.add_orient_constraint_control(target=n, parent=cl_Spine2)
     rct.lock_trans_and_scale(cl_neck)
     n = 'Head'
-    cl_Head = control_builder_proc(prefix=n, radius=15, hr=0.02, scale=(1,1.5,1))
+    cl_Head = control_builder_proc(prefix=n, radius=15, hr=0.02, scale=(1,0.7,1))
     cb.add_orient_constraint_control(target=n, parent=cl_neck)
     rct.lock_trans_and_scale(cl_Head)
     n = 'RightShoulder'
-    cl_RightShoulder = control_builder_proc(prefix=n, radius=8, axis=(1,0,0), hr=0.02, scale=(2,1,1.7))
+    cl_RightShoulder = control_builder_proc(prefix=n, radius=8, axis=(1,0,0), hr=0.02, scale=(2,1,1))
     cb.add_orient_constraint_control(target=n, parent=cl_Spine2)
     rct.lock_trans_and_scale(cl_RightShoulder)
     n = 'LeftShoulder'
-    cl_LeftShoulder = control_builder_proc(prefix=n, radius=8, axis=(1,0,0), hr=0.02, scale=(2,1,1.7))
+    cl_LeftShoulder = control_builder_proc(prefix=n, radius=8, axis=(1,0,0), hr=0.02, scale=(2,1,1))
     cb.add_orient_constraint_control(target=n, parent=cl_Spine2)
     rct.lock_trans_and_scale(cl_LeftShoulder)
     n = 'RightArm'
-    cl_RightArm = control_builder_proc(prefix=n, radius=7, axis=(1,0,0), hr=0.02, scale=(2,1,1.7))
+    cl_RightArm = control_builder_proc(prefix=n, radius=7, axis=(1,0,0), hr=0.02, scale=(2,1,1))
     cb.add_orient_constraint_control(target=n, parent=cl_RightShoulder)
     rct.lock_trans_and_scale(cl_RightArm)
     n = 'LeftArm'
-    cl_LeftArm = control_builder_proc(prefix=n, radius=7, axis=(1,0,0), hr=0.02, scale=(2,1,1.7))
+    cl_LeftArm = control_builder_proc(prefix=n, radius=7, axis=(1,0,0), hr=0.02, scale=(2,1,1))
     cb.add_orient_constraint_control(target=n, parent=cl_LeftShoulder)
     rct.lock_trans_and_scale(cl_LeftArm)
     n = 'RightForeArm'
-    cl_RightForeArm = control_builder_proc(prefix=n, radius=4, axis=(1,0,0), hr=0.02, scale=(2,1,1.7))
+    cl_RightForeArm = control_builder_proc(prefix=n, radius=4, axis=(1,0,0), hr=0.02, scale=(2,1,1))
     cb.add_orient_constraint_control(target=n, parent=cl_RightArm)
     rct.lock_trans_and_scale(cl_RightForeArm)
     n = 'LeftForeArm'
-    cl_LeftForeArm = control_builder_proc(prefix=n, radius=4, axis=(1,0,0), hr=0.02, scale=(2,1,1.7))
+    cl_LeftForeArm = control_builder_proc(prefix=n, radius=4, axis=(1,0,0), hr=0.02, scale=(2,1,1))
     cb.add_orient_constraint_control(target=n, parent=cl_LeftArm)
     rct.lock_trans_and_scale(cl_LeftForeArm)
     n = 'RightHand'
-    cl_RightHand = control_builder_proc(prefix=n, radius=3, axis=(1,0,0), hr=0.02, scale=(2,1,1.7))
+    cl_RightHand = control_builder_proc(prefix=n, radius=3, axis=(1,0,0), hr=0.02, scale=(2,1,1))
     cb.add_orient_constraint_control(target=n, parent=cl_RightForeArm)
     rct.lock_trans_and_scale(cl_RightHand)
     n = 'LeftHand'
-    cl_LeftHand = control_builder_proc(prefix=n, radius=3, axis=(1,0,0), hr=0.02, scale=(2,1,1.7))
+    cl_LeftHand = control_builder_proc(prefix=n, radius=3, axis=(1,0,0), hr=0.02, scale=(2,1,1))
     cb.add_orient_constraint_control(target=n, parent=cl_LeftForeArm)
     rct.lock_trans_and_scale(cl_LeftHand)
     n = 'RightUpLeg'
-    cl_RightUpLeg = control_builder_proc(prefix=n, radius=8, hr=0.02, scale=(1,1.5,2))
+    cl_RightUpLeg = control_builder_proc(prefix=n, radius=8, hr=0.1, scale=(1,0.7,1))
     cb.add_orient_constraint_control(target=n, parent=cl_hips)
     rct.lock_trans_and_scale(cl_RightUpLeg)
     n = 'LeftUpLeg'
-    cl_LeftUpLeg = control_builder_proc(prefix=n, radius=8, hr=0.02, scale=(1,1.5,2))
+    cl_LeftUpLeg = control_builder_proc(prefix=n, radius=8, hr=0.1, scale=(1,0.7,1))
     cb.add_orient_constraint_control(target=n, parent=cl_hips)
     rct.lock_trans_and_scale(cl_LeftUpLeg)
 
     # IK Pole Vector
     n = 'RightFoot_ikHandle_poleVec'
-    cl_RightLeg_PoleVec = control_builder_proc(prefix=n, radius=2, axis=(0,0,1), hr=0.02, scale=(1,3,1.5))
+    cl_RightLeg_PoleVec = control_builder_proc(prefix=n, radius=2, axis=(0,0,1), hr=0.1, scale=(1,0.5,1))
     cb.add_poleVector_constraint_control(control=n, ik_handle='RightFoot_ikHandle', align_joint='RightLeg', parent=cl_global)
 
     n = 'LeftFoot_ikHandle_poleVec'
-    cl_LeftLeg_PoleVec = control_builder_proc(prefix=n, radius=2, axis=(0,0,1), hr=0.02, scale=(1,3,1.5))
+    cl_LeftLeg_PoleVec = control_builder_proc(prefix=n, radius=2, axis=(0,0,1), hr=0.1, scale=(1,0.5,1))
     cb.add_poleVector_constraint_control(control=n, ik_handle='LeftFoot_ikHandle', align_joint='LeftLeg', parent=cl_global)
     
     # Foot Roll Controls
@@ -191,12 +190,12 @@ def build_controls(cnFld, *pArgs):
 
     # IK Handles Foot Roll controls - note: rotate for IK is useless
     n = 'RightFoot_FRoll_LocA'
-    cl_RightUpLeg = control_builder_proc(prefix=n, radius=5, hr=0.02, scale=(1,1.5,1.5))
+    cl_RightUpLeg = control_builder_proc(prefix=n, radius=8, hr=0.1, scale=(1,0.5,2))
     cb.add_parent_constraint_control(target=n, parent=cl_global)
     rct.lock_scale(cl_RightUpLeg)
 
     n = 'LeftFoot_FRoll_LocA'
-    cl_LeftUpLeg = control_builder_proc(prefix=n, radius=5, hr=0.02, scale=(1,1.5,1.5))
+    cl_LeftUpLeg = control_builder_proc(prefix=n, radius=8, hr=0.1, scale=(1,0.5,2))
     cb.add_parent_constraint_control(target=n, parent=cl_global)
     rct.lock_scale(cl_LeftUpLeg)
 
