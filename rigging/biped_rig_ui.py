@@ -26,7 +26,7 @@ def createRiggingToolsUI():
     cmds.separator( h=10, style='none' )
     cmds.text( label='HIK Character Name:' )
     
-    cnFld = cmds.textField( text='UrvaX2' )
+    cnFld = cmds.textField( text='BipedX1' )
     cmds.text( label='Root Joint: COG' )
     
     cmds.button( label='Fix All Joint Orient', width=100, height=30, command=functools.partial( clean_up_joint_orient, cnFld) )

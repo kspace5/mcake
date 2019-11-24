@@ -1,6 +1,5 @@
 from __future__ import print_function
 import maya.cmds as cmds
-import numpy as np
 
 def align_joints():
     objs = cmds.ls(sl=True)
