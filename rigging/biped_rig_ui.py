@@ -26,12 +26,13 @@ def createRiggingToolsUI():
     cmds.separator( h=10, style='none' )
     cmds.text( label='HIK Character Name:' )
     
-    cnFld = cmds.textField( text='BipedX1' )
+    cnFld = cmds.textField( text='Character1' )
     cmds.text( label='Root Joint: COG' )
     
     cmds.button( label='Freeze Trans + Fix : Joint Orients [to X]', width=100, height=30, command=functools.partial( clean_up_joint_orient, cnFld) )
     cmds.button( label='Check Joints Integrity', command=functools.partial( check_joints_integrity, cnFld) )
-    cmds.button( label='Create Biped Control Rig', backgroundColor=(0.9,0.6,0.3), command=functools.partial( build_complete_rig, cnFld) )
+    cmds.button( label='Step 1: Create and Refine Extra Joint Structure', backgroundColor=(0.7,0.4,0.1), command=functools.partial( refine_joints, cnFld) )
+    cmds.button( label='Step 2: Create Biped Control Rig', backgroundColor=(0.7,0.7,0.1), command=functools.partial( build_complete_rig, cnFld) )
     
     cmds.separator( h=10, style='none' )
     cmds.separator( h=10, style='none' )
@@ -69,19 +70,6 @@ def set_joint_attributes_for_rigging(cnFld, *pArgs):
 
     print('Joint params set for', cn)
 
-'''
-def create_IK_Handles(cnFld, *pArgs):
-    cn = uu.text_val(cnFld)
-    n = cn + '_RightFoot_ikHandle'
-    cmds.ikHandle(n=n, sj=cn+'_RightUpLeg', ee=cn+'_RightFoot', sol='ikRPsolver')
-    cmds.setAttr(n + '.stickiness', 1)
-    gu.freeze_transformations_by_name(n)
-    n = cn + '_LeftFoot_ikHandle'
-    cmds.ikHandle(n=n, sj=cn+'_LeftUpLeg', ee=cn+'_LeftFoot', sol='ikRPsolver')
-    cmds.setAttr(n + '.stickiness', 1)
-    gu.freeze_transformations_by_name(n)
-'''
-
 def check_joints_integrity(cnFld, *pArgs):
     cn = uu.text_val(cnFld)
     # Assumes root is Hips, also select entire hierarchy - cool!
@@ -90,12 +78,25 @@ def check_joints_integrity(cnFld, *pArgs):
     msg = 'All joints verified clean - Congrats!\n(i.e. All joint rotate X,Y,Z and jointOrient X,Y,Z are zeroed out)' if integ else 'Dirty joints found!'
     print(msg)
 
+def refine_joints(cnFld, *pArgs):
+    cn = uu.text_val(cnFld)
+
+    cb = rct.BipedControlBuilder(cn)
+    
+    # Create additional joints like COG, spine root, toe end and parent them properly
+    cb.add_extra_joints_to_hik_system()
+    clean_up_joint_orient(cnFld)
+
 # build and bind controls
 def build_controls(cnFld, *pArgs):
     cn = uu.text_val(cnFld)
 
     cb = rct.BipedControlBuilder(cn)
     
+    # Create additional joints like COG, spine root, toe end and parent them properly
+    # cb.add_extra_joints_to_hik_system()
+    # clean_up_joint_orient(cnFld)
+    # return
     cl_global = cb.build_global_control()
     cb.bind_global_control()
 
@@ -178,11 +179,11 @@ def build_controls(cnFld, *pArgs):
 
     # IK Pole Vector
     n = 'RightFoot_ikHandle_poleVec'
-    cl_RightLeg_PoleVec = control_builder_proc(prefix=n, radius=2, axis=(0,0,1), hr=0.1, scale=(1,0.5,1))
+    cl_RightLeg_PoleVec = control_builder_proc(prefix=n, radius=3, axis=(0,0,1), hr=0.1, scale=(0.5,1,1))
     cb.add_poleVector_constraint_control(control=n, ik_handle='RightFoot_ikHandle', align_joint='RightLeg', parent=cl_global)
 
     n = 'LeftFoot_ikHandle_poleVec'
-    cl_LeftLeg_PoleVec = control_builder_proc(prefix=n, radius=2, axis=(0,0,1), hr=0.1, scale=(1,0.5,1))
+    cl_LeftLeg_PoleVec = control_builder_proc(prefix=n, radius=3, axis=(0,0,1), hr=0.1, scale=(0.5,1,1))
     cb.add_poleVector_constraint_control(control=n, ik_handle='LeftFoot_ikHandle', align_joint='LeftLeg', parent=cl_global)
     
     # Foot Roll Controls

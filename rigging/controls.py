@@ -69,6 +69,37 @@ class BipedControlBuilder:
 
         gu.freeze_transformations_by_name(ctrl_obj)
 
+    def add_extra_joints_to_hik_system(self):
+        n_cog = self.cn + '_COG'
+        n_hips = self.cn + '_Hips'
+        n_spineRoot = self.cn + '_SpineRoot'
+        n_spine = self.cn + '_Spine'
+
+        cmds.select(None)
+        # Create COG Joint
+        cmds.joint(p=(0, 0, 0), n=n_cog, rad=3)
+        #cmds.parent(n_cog, self.MAYA_HIK_REFERENCE)
+        gu.move_to_pos_of(n_cog, n_hips)
+        
+        cmds.select(None)
+        # Create Spine Root Joint
+        cmds.joint(p=(0, 0, 0), n=n_spineRoot, rad=2)
+        gu.move_to_pos_of(n_spineRoot, n_hips)
+
+        cmds.parent(n_cog, self.MAYA_HIK_REFERENCE)
+        cmds.parent(n_spine, n_spineRoot)
+        cmds.parent(n_spineRoot, n_cog)
+        cmds.parent(n_hips, n_cog)
+        
+        n_rToeBase = self.cn + '_RightToeBase'
+        n_lToeBase = self.cn + '_LeftToeBase'
+        n_rToeEnd = self.cn + '_RightToeEnd'
+        n_lToeEnd = self.cn + '_LeftToeEnd'
+        cmds.select(n_rToeBase)
+        cmds.joint(p=(0, 0, 5.0),r=True, n=n_rToeEnd, rad=2)
+        cmds.select(n_lToeBase)
+        cmds.joint(p=(0, 0, 5.0),r=True, n=n_lToeEnd, rad=2)
+       
     def add_orient_constraint_control(self, **p):
         ctrl_obj = self.cn + '_ctrl_' + p['target']
         target = self.cn + '_' + p['target']
