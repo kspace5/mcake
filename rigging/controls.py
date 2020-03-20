@@ -79,12 +79,12 @@ class BipedControlBuilder:
         # Create COG Joint
         cmds.joint(p=(0, 0, 0), n=n_cog, rad=3)
         #cmds.parent(n_cog, self.MAYA_HIK_REFERENCE)
-        gu.move_to_pos_of(n_cog, n_hips)
+        gu.move_to_pos_of(n_hips, n_cog)
         
         cmds.select(None)
         # Create Spine Root Joint
         cmds.joint(p=(0, 0, 0), n=n_spineRoot, rad=2)
-        gu.move_to_pos_of(n_spineRoot, n_hips)
+        gu.move_to_pos_of(n_hips, n_spineRoot)
 
         cmds.parent(n_cog, self.MAYA_HIK_REFERENCE)
         cmds.parent(n_spine, n_spineRoot)
